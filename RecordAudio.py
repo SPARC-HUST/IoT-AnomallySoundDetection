@@ -7,13 +7,15 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-lh","--host",
-                    help="Local IP Address")
-parser.add_argument("-p", "--port",type=int,
+                    help="IP addresses receiving data")
+parser.add_argument("-p", "--port",
+                    type=int,
                     help="Port")
-parser.add_argument("-t", "--time",type=int,
-                    help="Time of file wav")
-parser.add_argument("-d", "--prefix",
-                    help="Prefix file wav")
+parser.add_argument("-t", "--time",
+                    type=int,
+                    help="Audio file duration")
+parser.add_argument("-f", "--folder",
+                    help="Folder containing the audio file")
 args = parser.parse_args()
 
 class UdpReceiver:
