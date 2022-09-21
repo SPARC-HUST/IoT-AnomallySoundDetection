@@ -1,13 +1,27 @@
+import string
 import numpy as np 
 import socket
 import datetime
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-lh","--host",
+                    help="Local IP Address")
+parser.add_argument("-p", "--port",type=int,
+                    help="Port")
+parser.add_argument("-t", "--time",type=int,
+                    help="Time of file wav")
+parser.add_argument("-d", "--prefix",
+                    help="Prefix file wav")
+args = parser.parse_args()
 
 class UdpReceiver:
     HOST = '0.0.0.0'
     DATAPACKSIZE = 128
     VOICEIPNUM = 1
     localPort = 0
-    recMinutes = 0
+    recSeconds = 0
     decodeTbl = [0xEA80,0xEB80,0xE880,0xE980,0xEE80,0xEF80,0xEC80,0xED80,0xE280,0xE380,0xE080,0xE180,0xE680,0xE780,0xE480,0xE580,
             0xF540,0xF5C0,0xF440,0xF4C0,0xF740,0xF7C0,0xF640,0xF6C0,0xF140,0xF1C0,0xF040,0xF0C0,0xF340,0xF3C0,0xF240,0xF2C0,
             0xAA00,0xAE00,0xA200,0xA600,0xBA00,0xBE00,0xB200,0xB600,0x8A00,0x8E00,0x8200,0x8600,0x9A00,0x9E00,0x9200,0x9600,
@@ -24,54 +38,54 @@ class UdpReceiver:
             0x0058,0x0048,0x0078,0x0068,0x0018,0x0008,0x0038,0x0028,0x00D8,0x00C8,0x00F8,0x00E8,0x0098,0x0088,0x00B8,0x00A8,
             0x0560,0x0520,0x05E0,0x05A0,0x0460,0x0420,0x04E0,0x04A0,0x0760,0x0720,0x07E0,0x07A0,0x0660,0x0620,0x06E0,0x06A0,
             0x02B0,0x0290,0x02F0,0x02D0,0x0230,0x0210,0x0270,0x0250,0x03B0,0x0390,0x03F0,0x03D0,0x0330,0x0310,0x0370,0x0350]
-  
-    
-    voIPSettings ={'IPAddress':'', 'Port':'', 'Prefix':'', 'waveRecorder':''}      
+   
 
 
     def VoiceIPRecord(self):
         buff  = np.short(np.array(range(self.DATAPACKSIZE)))
-        self.HOST = '0.0.0.0'  #socket.gethostname() 
+        self.HOST = args.host  #socket.gethostname() 
         self.DATAPACKSIZE = 128
-        self.localPort = 16384
-        self.recMinutes = 1
+        self.localPort = args.port
+        self.recSeconds = args.time
+        self.prefix = args.prefix
         sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         sock.bind((self.HOST,self.localPort))
         # GetConfig()
         
 
-        self.voIPSettings['IPAddress'] = '10.0.0.1'
-        self.voIPSettings['Port']= 16384
-        self.voIPSettings['Prefix']= 'D:/AudioProcessing/New folder/test1/voip' # wav file recording path
+        # self.voIPSettings['IPAddress'] = '10.0.0.1'
+        # self.voIPSettings['Port']= 16384
+        # self.voIPSettings['Prefix']= 'D:/AudioProcessing/New folder/test1/voip' # wav file recording path
         
-        self.voIPSettings['waveRecorder'] =  WaveWrite(self.voIPSettings['Prefix'],self.recMinutes)
+        self.voIPWrite =  WaveWrite(self.prefix,self.recSeconds)
             
         while True:
             data, remoteEP = sock.recvfrom(140)
+            print(data)
             if data[:4] != b'BCOM':
                 continue
             if data[7] != 0:
                 continue        
             for j in range(0, self.DATAPACKSIZE):
                 buff[j] = self.decodeTbl[data[12+j]]
-            self.voIPSettings['waveRecorder'].Write(buff) 	        	
+            self.voIPWrite.Write(buff) 	        	
 
 
 class WaveWrite:
     f = ''     
     filePrefix = ''  
-    waveMinutes = 0
+    waveSeconds = 0
     limitCount = 0
     writeCount = 0
 
-    def __init__(self, prefix, minutes):
-        self.waveMinutes = minutes
+    def __init__(self, prefix, seconds):
+        self.waveSeconds = seconds
         self.filePrefix = prefix
-        self.limitCount = minutes * (8000 * 60 // UdpReceiver.DATAPACKSIZE)
+        self.limitCount = seconds * (8000// UdpReceiver.DATAPACKSIZE)
         self.Open()
 
     def WavHeader(self,sampleRate, bitsPerSample, channels): # samplingFreq,  sampleBit, channels
-        datasize = sampleRate * self.waveMinutes * 60 * channels * bitsPerSample // 8# = 5274984
+        datasize = sampleRate * self.waveSeconds* channels * bitsPerSample // 8# = 5274984
         header_file = bytes("RIFF",'ascii')                                               # (4byte) Marks file as RIFF
         header_file += (datasize + 36).to_bytes(4,'little')                               # (4byte) File size in bytes excluding this and RIFF marker
         header_file += bytes("WAVE",'ascii')                                              # (4byte) File type
@@ -89,7 +103,7 @@ class WaveWrite:
 # Create new file and write header
     def Open(self):
         x = datetime.datetime.now()
-        fileName = self.filePrefix + x.strftime("%Y%m%d%H%M") + ".wav"
+        fileName = self.filePrefix + x.strftime("%Y%m%d%H%M%S") + ".wav"
         self.writeCount = 0
         self.f = open(fileName,"wb")
         self.f.write(self.WavHeader(8000, 16, 1))   
