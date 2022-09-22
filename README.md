@@ -3,6 +3,7 @@
 Usage: RecordAudio.py [-h] [-lh HOST] [-p PORT] [-t TIME] [-f FOLDER]
 
 Optional arguments:
+
     -h, --help                  show this help message and exit.
     
     -lh HOST, --host HOST       Set IP address receiving data.
