@@ -49,7 +49,7 @@ class UdpReceiver:
         self.DATAPACKSIZE = 128
         self.localPort = args.port
         self.recSeconds = args.time
-        self.prefix = args.prefix
+        self.prefix = args.folder
         sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         sock.bind((self.HOST,self.localPort))
         # GetConfig()
