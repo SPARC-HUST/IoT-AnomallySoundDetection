@@ -1,0 +1,15 @@
+DATASET:
+  PATH:
+    TFRECORDS : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/tfrecord' 
+    NORMAL : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/train' 
+    ANOMALY : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/source_test/Anomaly'
+    TEST: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/source_test/Normal'
+
+TRAINING: 
+  LOG_FOLDER : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/Results'
+  EPOCH : 75
+
+TRANSFER_LEARNING: 
+  # NORMAL_DATA_DIRS: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/tfrecord/train'
+  # ANOMALY_DATA_DIRS: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/tfrecord/anomaly'
+  BASED_WEIGHTS: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/Results/saved_model/vq_vae'
