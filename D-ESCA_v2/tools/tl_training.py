@@ -1,5 +1,6 @@
 import os
 import sys
+import sklearn
 sys.path.append(os.getcwd())
 import tensorflow as tf
 import numpy as np
