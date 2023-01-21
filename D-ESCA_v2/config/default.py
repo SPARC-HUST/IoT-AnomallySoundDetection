@@ -35,8 +35,8 @@ _C.TRAINING = CN()
 _C.TRAINING.LOG_FOLDER = './Results/temp' ############
 _C.TRAINING.EPOCH = 3
 _C.TRAINING.LEARNING_RATE = 1e-3
-_C.TRAINING.PRETRAINED_WEIGHTS = '/home/thanhho/SPARC/ESCA/Code/train_on_PCv2/Results/temp/saved_model'
-_C.TRAINING.SAVE_PATH = '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/Results'
+_C.TRAINING.PRETRAINED_WEIGHTS = './Results/temp/saved_model'
+_C.TRAINING.SAVE_PATH = './Results'
 
 
 # paramters specifically for transfer learning
@@ -44,8 +44,8 @@ _C.TRANSFER_LEARNING = CN()
 _C.TRANSFER_LEARNING.NORMAL_DATA_DIRS = None
 _C.TRANSFER_LEARNING.ANOMALY_DATA_DIRS = None
 _C.TRANSFER_LEARNING.TEST_DIR = None
-_C.TRANSFER_LEARNING.BASED_WEIGHTS = '/home/thanhho/SPARC/ESCA/Code/train_on_PCv2/Results/temp/saved_model'
-_C.TRANSFER_LEARNING.SAVE_PATH = '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/Results'
+_C.TRANSFER_LEARNING.BASED_WEIGHTS = './Results/temp/saved_model'
+_C.TRANSFER_LEARNING.SAVE_PATH = './Results'
 _C.TRANSFER_LEARNING.BETA = 0.5
 _C.TRANSFER_LEARNING.ANOM_BATCH_SIZE = 128
 
@@ -64,9 +64,12 @@ _C.REALTIME.RUNTIME = 300
 
 _C.RECORD = CN()
 # _C.RECORD.DATASET_MODE = True
-_C.RECORD.DATASET_PATH = '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/Results/realtime/dataset'
+_C.RECORD.DATASET_PATH = './dataset'
 _C.RECORD.ABNOMALY = False
+_C.RECORD.DEVICE_INDEX_INPUT = 0
 _C.RECORD.SECOND = 2
+_C.RECORD.CHANNELS = 1
+_C.RECORD.SAMPLING_RATE = 44100
 def get_cfg_defaults():
   """Get a yacs CfgNode object with default values for my_project."""
   # Return a clone so that the defaults will not be altered

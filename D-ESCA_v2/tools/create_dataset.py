@@ -3,6 +3,9 @@ import wave
 import shutil
 import os
 import sys
+import signal
+
+from os import listdir, scandir, rename, environ, remove, setpgrp, killpg,_exit, getpid
 sys.path.append(os.getcwd())
 from config import update_config, get_cfg_defaults
 from helper.parser import arg_parser 
@@ -15,17 +18,17 @@ def recoder(cfg):
 
     if not cfg.RECORD.ABNOMALY:
         WAVE_OUTPUT_PATH = join(cfg.RECORD.DATASET_PATH,'normal')
-        os.mkdir(WAVE_OUTPUT_PATH)
     else: 
-        WAVE_OUTPUT_PATH = join(cfg.RECORD.DATASET_PATH,'abnormal')
-        os.mkdir(WAVE_OUTPUT_PATH)
+        WAVE_OUTPUT_PATH = join(cfg.RECORD.DATASET_PATH,'abnomaly')
 
-    iDeviceIndex = 18                  # Index number of recording device
+    if os.path.exists(WAVE_OUTPUT_PATH) == False:
+        os.mkdir(WAVE_OUTPUT_PATH)
+    iDeviceIndex = cfg.RECORD.DEVICE_INDEX_INPUT        # Index number of recording device
 
         # Basic Information Settings
     FORMAT = pyaudio.paInt16                    # Audio Format
-    CHANNELS = 1                                # monaural
-    RATE = 44100                                # sample rate
+    CHANNELS = cfg.RECORD.CHANNELS                                # monaural
+    RATE = cfg.RECORD.SAMPLING_RATE                                # sample rate
     CHUNK = 2**11                               # Number of data points
     audio = pyaudio.PyAudio()                   #
     
@@ -51,11 +54,18 @@ def recoder(cfg):
                 waveFile.setframerate(RATE)
                 waveFile.writeframes(b''.join(frames))
                 waveFile.close()
-            except:
+            except KeyboardInterrupt:
+                print("---- Kill recording")
+                audio_record_pid = getpid()
+                killpg(audio_record_pid, signal.SIGINT)
+            except :
                 print("os.system() failed")
+
             print("End cre Audio file")
+
     except KeyboardInterrupt as e:
-        print(e)
+        print(e)    
+
 
 
     print ("finished recording")
