@@ -11,7 +11,7 @@ class ModelTrainer():
     def __init__(self, cfg):
         # important parameters for training
         self.model_name = cfg.MODEL.TYPE 
-        self.log_dir = cfg.TRANSFER_LEARNING.SAVE_PATH if cfg.REALTIME.TRANSFER_LEARNING  else cfg.TRAINING.SAVE_PATH
+        self.log_dir = cfg.TRAINING.SAVE_PATH
         self.epochs = cfg.TRAINING.EPOCH
         self.learning_rate = cfg.TRAINING.LEARNING_RATE
         # self.theshold_save_path =  cfg.POSTPROCESS.PATH_SAVE_THRESHOLD

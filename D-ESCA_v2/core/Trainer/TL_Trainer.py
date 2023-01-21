@@ -4,6 +4,7 @@ from core.Trainer import ModelTrainer
 class TL_Trainer(ModelTrainer):
     def __init__(self, cfg, from_config=True, **kwargs):
         super().__init__(cfg)
+        self.log_dir = cfg.TRANSFER_LEARNING.SAVE_PATH
         self.beta = cfg.TRANSFER_LEARNING.BETA if from_config else kwargs['beta']
         self.training_anomaly = kwargs['training_anomaly']
         self.batch_size = cfg.TRANSFER_LEARNING.ANOM_BATCH_SIZE \
