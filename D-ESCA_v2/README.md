@@ -12,18 +12,16 @@ ESCA has represented the real-time abnormal environment sound detection.
 3. [Features](#-Features)
 4. [Prepare data and Training](#-Prepare-data-and-Training)
 2. [Results](#-Results)
-## Requirements
+## Requirements 
 * Python 3.7
-* Tensorflow & Tensorflow-GPU version 2.7.0
-* Gammatone https://github.com/detly/gammatone
-
+* Setup the environment according to the steps in the [Environment_Setting_Guide.docx](./Docs/Environment_Setting_Guide.docx) documentation.
 
 ## Installation
 
 Install project with command
 ```bash
   git clone https://github.com/nqthinh493/Environment-Sound-Collection-Analysis-Platform
-  pip install -r requirements.txt
+
 ```
     
 ## Features
@@ -37,7 +35,11 @@ Install project with command
 
 **Output:** Loss value, Normal/Abnormal classificaion of files splitted from the original audio file.
 
-
+## Create dataset
+*To run create dataset:
+```bash
+    python ./tool/create_dataset.py -cfg ./config/params.yaml
+```
 
 ## Prepare data and Training
 
@@ -65,7 +67,12 @@ Install project with command
 ```bash
   python ./tools/tl_training.py -cfg ./config/params.yaml
 ```
+### Real-time
+*To run realtime-detection:
+```bash
+   python ./tools/rt_test.py -cfg ./config/params.yaml  
+```
 ## Results
 ## Documentation
 
-[Documentation](https://linktodocumentation)
+[Documentation](./Docs/)
