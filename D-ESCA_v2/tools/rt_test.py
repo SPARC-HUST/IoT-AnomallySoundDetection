@@ -78,6 +78,7 @@ def testing(cfg = None, eval=None):
     plotting_graph = join(root, '../helper', 'plotting_graph.py')
     command = ['python3',plotting_graph, '-th', str(threshold), '-csv', csv_file]
     graph = subprocess.Popen(command, preexec_fn=setpgrp)
+    print('------------------1-----------------------')
 
     try:
         while(True):
@@ -88,36 +89,39 @@ def testing(cfg = None, eval=None):
                 break
             if not 'basefile.wav' in base_file:
                 continue
+            try: 
+                s = join(sample_loc, 'basefile.wav')
+                _, audio = wavfile.read(s)
+                gtg = gtgram.gtgram(audio, frame_rate, window_time, hop_time, channels, f_min)    # noqa: E501
+                a = np.flipud(20 * np.log10(gtg))
+                # rescale
+                a = np.clip((a-MIN)/(MAX-MIN), a_min=0, a_max=1)
+                a = np.reshape(a, (1 ,a.shape[0], a.shape[1], 1))
 
-            s = join(sample_loc, 'basefile.wav')
-            _, audio = wavfile.read(s)
-            gtg = gtgram.gtgram(audio, frame_rate, window_time, hop_time, channels, f_min)    # noqa: E501
-            a = np.flipud(20 * np.log10(gtg))
-            # rescale
-            a = np.clip((a-MIN)/(MAX-MIN), a_min=0, a_max=1)
-            a = np.reshape(a, (1 ,a.shape[0], a.shape[1], 1))
+                if(a.shape != (1, 32, 32, 1)):
+                    print("Input shape Error:")
+                    print(a.shape)
+                    continue
+                pred = np.mean((a-model.predict(a))**2)
+                type = 1 if pred > threshold else 0
 
-            if(a.shape != (1, 32, 32, 1)):
-                print("Input shape Error:")
-                print(a.shape)
-                continue
-            pred = np.mean((a-model.predict(a))**2)
-            type = 1 if pred > threshold else 0
+                data[field_names[0]] = i
+                data[field_names[1]] = pred
+                data[field_names[2]] = datetime.now().strftime("%Y%m%d-%H%M%S")
 
-            data[field_names[0]] = i
-            data[field_names[1]] = pred
-            data[field_names[2]] = datetime.now().strftime("%Y%m%d-%H%M%S")
+                with open(csv_file, 'a') as file:
+                    csv_writer = csv.DictWriter(file, fieldnames=field_names)
+                    csv_writer.writerow(data)
 
-            with open(csv_file, 'a') as file:
-                csv_writer = csv.DictWriter(file, fieldnames=field_names)
-                csv_writer.writerow(data)
-
-            rename(s, join(cfg.REALTIME.LOG_PATH,'temp', f'basefile_{i}.wav')) # move file
-            i += 1
-            if type == 1:
-                print(f'Detect abnormal at {end - start}s from starting time.')
-            else:
-                print('Everything is normal.')
+                rename(s, join(cfg.REALTIME.LOG_PATH,'temp', f'basefile_{i}.wav')) # move file
+                i += 1
+                if type == 1:
+                    print(f'Detect abnormal at {end - start}s from starting time.')
+                else:
+                    print('Everything is normal.')
+            
+            except:
+                pass
 
         print('inferencing end.')
         # wait to input any key
@@ -146,6 +150,7 @@ record_mic = join(root, '../helper','usbmictest.py')
 try:
     audio_record = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', record_mic, '-cfg', './config/params.yaml'],
                                     preexec_fn=setpgrp)
+    print('------------------2-----------------------')
     save_file = testing(cfg= cfg, eval=prediction_list)
     killpg(audio_record.pid, signal.SIGINT)
     print('Cleaning up...')

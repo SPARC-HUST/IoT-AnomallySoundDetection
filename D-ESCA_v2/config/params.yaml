@@ -1,12 +1,12 @@
 DATASET:
   PATH:
-    TFRECORDS : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/tfrecord' 
-    NORMAL : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/train' 
-    ANOMALY : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/source_test/Anomaly'
+    TFRECORDS : '/home/thanhho/SPARC/ESCA/Code/Data/Target-20230127T101110Z-001/Target/intersection/Target1/tfrecord' 
+    NORMAL : '/home/thanhho/SPARC/ESCA/Code/Data/Target-20230127T101110Z-001/Target/intersection/Target1/normal' 
+    ANOMALY : '/home/thanhho/SPARC/ESCA/Code/Data/Target-20230127T101110Z-001/Target/intersection/Target1/abnormal'
     # TEST: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/source_test/Normal'
 
 TRAINING: 
-  LOG_FOLDER : '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/Results'
+  SAVE_PATH : '/home/thanhho/SPARC/ESCA/Code/Data/audio_44.1k-20230127T101044Z-001/Results'
   EPOCH : 75
 
 TRANSFER_LEARNING: 

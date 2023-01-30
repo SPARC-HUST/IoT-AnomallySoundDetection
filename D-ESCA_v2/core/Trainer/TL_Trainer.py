@@ -1,10 +1,12 @@
 import tensorflow as tf
 from core.Trainer import ModelTrainer
+from os.path import join
 
 class TL_Trainer(ModelTrainer):
     def __init__(self, cfg, from_config=True, **kwargs):
         super().__init__(cfg)
         self.log_dir = cfg.TRANSFER_LEARNING.SAVE_PATH
+        self.theshold_save_path = join(self.log_dir,'save_parameter')
         self.beta = cfg.TRANSFER_LEARNING.BETA if from_config else kwargs['beta']
         self.training_anomaly = kwargs['training_anomaly']
         self.batch_size = cfg.TRANSFER_LEARNING.ANOM_BATCH_SIZE \
