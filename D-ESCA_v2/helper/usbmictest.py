@@ -17,17 +17,17 @@ def CPfile(output_file, base_file):
     if (os.path.exists(base_file) == False):
         shutil.copy2(output_file, base_file)
 
-RECORD_SECONDS = 2                         # Length of time to record (seconds)
+RECORD_SECONDS = cfg.REALTIME.SECOND                         # Length of time to record (seconds)
                                             # File name to save the audio
 WAVE_OUTPUT_FILENAME = join(cfg.REALTIME.LOG_PATH,'record', 'output.wav')
 WAVE_BASE_FILENAME = join(cfg.REALTIME.LOG_PATH,'record','basefile.wav')
 
-iDeviceIndex = 18                   # Index number of recording device
+iDeviceIndex = cfg.REALTIME.DEVICE_INDEX_INPUT                   # Index number of recording device
 
     # Basic Information Settings
 FORMAT = pyaudio.paInt16                    # Audio Format
-CHANNELS = 1                                # monaural
-RATE = 44100                                # sample rate
+CHANNELS = cfg.REALTIME.CHANNELS                                 # monaural
+RATE = cfg.REALTIME.SAMPLING_RATE                                  # sample rate
 CHUNK = 2**11                               # Number of data points
 audio = pyaudio.PyAudio()                   #
  
