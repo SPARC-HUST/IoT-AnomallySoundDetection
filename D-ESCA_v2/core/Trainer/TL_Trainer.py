@@ -29,11 +29,11 @@ class TL_Trainer(ModelTrainer):
     # compute loss in transfer learning
     # @tf.function
     def _compute_loss(self, original, reconstruction):
-        print("----------compute loss 1-------")
+        # print("----------compute loss 1-------")
         sample_wise_loss = self._reconstruction_loss_sample_wise(original, reconstruction)
-        print("----------sample_wise_loss 1-------")
+        # print("----------sample_wise_loss 1-------")
         anom_loss = self._anomaly_loss()
-        print("----------anom_loss 1-------")
+        # print("----------anom_loss 1-------")
         supervised_loss = self.beta*tf.reduce_mean(
                         tf.sigmoid(anom_loss - sample_wise_loss)
                 )

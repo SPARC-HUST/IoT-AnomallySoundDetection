@@ -113,7 +113,7 @@ class ModelTrainer():
         # print(self.model.predict(a).shape)
         # self.model.predict()
         self.model = tf.keras.models.load_model(path)
-        print("-------2-------")
+        # print("-------2-------")
         print(self.model.summary())
 
     def compile(self, optimizer=None):
@@ -122,10 +122,10 @@ class ModelTrainer():
 
     # define some function to calculate the losses
     def _compute_loss(self, original, reconstruction):
-        print("----------compute loss 0-------")
+        # print("----------compute loss 0-------")
         sample_wise_loss = self._reconstruction_loss_sample_wise(original, reconstruction)
-        print("sample_wise_loss : ")
-        print(sample_wise_loss.shape)
+        # print("sample_wise_loss : ")
+        # print(sample_wise_loss.shape)
         return {'reconstruction_loss': tf.reduce_mean(sample_wise_loss)}, tf.squeeze(sample_wise_loss)
 
     def _reconstruction_loss_sample_wise(self, original, reconstruction):
@@ -139,10 +139,12 @@ class ModelTrainer():
         with tf.GradientTape() as tape:
             # Outputs from the AE model.
             reconstructions = self.model(x)
-            print("x:")
-            print(x.shape)
-            print("reconstructions : ")
-            print(reconstructions.shape)
+
+            # print("x:")
+            # print(x.shape)
+            # print("reconstructions : ")
+            # print(reconstructions.shape)
+
             # Calculate the losses.
             loss_dict, sample_loss = self._compute_loss(x, reconstructions)
             loss_dict['model_loss'] = sum(self.model.losses)
@@ -214,12 +216,12 @@ class ModelTrainer():
                 for feature, label, idx in data_dict[part]:
                     # preprocess feautures
                     processed_feature = self.pre_prc.rescale(feature)
-                    print("----- processed_feature 1---")
-                    print(processed_feature.shape)
+                    # print("----- processed_feature 1---")
+                    # print(processed_feature.shape)
                     processed_feature = self.pre_prc.add_dimentsion(processed_feature)
-                    print("----- processed_feature 2---")
+                    # print("----- processed_feature 2---")
 
-                    print(processed_feature.shape)
+                    # print(processed_feature.shape)
                     # a = np.reshape(processed_feature, (1 ,processed_feature.shape[1], processed_feature.shape[2], 1))
                     # print("Shape a:")
                     # print(a.shape)

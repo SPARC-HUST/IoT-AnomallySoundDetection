@@ -66,8 +66,8 @@ class Postprocessor():
 
         precision, recall, thresholds = precision_recall_curve(true_labels, predictions)
         threshold = thresholds[np.argmax(precision+recall)]
-        print("MIN",min)
-        print("MAX",max)
+        # print("MIN",min)
+        # print("MAX",max)
         metrics = {
             # 'auc': auc,
             # 'auc_0.1': auc_1,
@@ -79,7 +79,7 @@ class Postprocessor():
             'max': max,
             'min': min
         }
-        print(metrics)
+        # print(metrics)
         with open(join(path, 'metrics_detail.json'), 'w') as file:
             json.dump(metrics, file, indent=4, cls=NpEncoder)
 
