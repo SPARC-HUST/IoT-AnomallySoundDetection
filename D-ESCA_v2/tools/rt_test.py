@@ -1,4 +1,4 @@
-from os import listdir, scandir, rename, environ, remove, setpgrp, killpg,_exit
+from os import listdir, getpid, scandir, rename, environ, remove, setpgrp, killpg,_exit
 environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from tensorflow.keras.models import load_model
 from os.path import join, isdir, dirname
@@ -78,7 +78,7 @@ def testing(cfg = None, eval=None):
     plotting_graph = join(root, '../helper', 'plotting_graph.py')
     command = ['python3',plotting_graph, '-th', str(threshold), '-csv', csv_file]
     graph = subprocess.Popen(command, preexec_fn=setpgrp)
-    print('------------------1-----------------------')
+    # print('------------------1-----------------------')
 
     try:
         while(True):
@@ -146,19 +146,27 @@ now = datetime.now()
 cur_time = now.strftime("%Y%m%d_%H%M%S")
 record_mic = join(root, '../helper','usbmictest.py')
 # record_mic = join(root, '../tools','create_dataset.py')
-
+monitoring = join(root, '../helper', 'Resource_monitoring.py')
+monitor_savepath = join(cfg.TRAINING.SAVE_PATH, 'mornitor')
+if not os.path.exists(monitor_savepath):
+  os.mkdir(monitor_savepath)
+pid = getpid()
 try:
+    monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', monitoring, '-p', str(pid), '-log', monitor_savepath], 
+                                    preexec_fn=setpgrp)
     audio_record = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', record_mic, '-cfg', './config/params.yaml'],
                                     preexec_fn=setpgrp)
-    print('------------------2-----------------------')
+    # print('------------------2-----------------------')
     save_file = testing(cfg= cfg, eval=prediction_list)
     killpg(audio_record.pid, signal.SIGINT)
+    killpg(monitoring_proc.pid,signal.SIGINT)
     print('Cleaning up...')
     clean_up(cur_time)
 except KeyboardInterrupt as e:
     print('Get interrupted by keyboard')
     print('Saving the results so far...')
     killpg(audio_record.pid, signal.SIGINT)
+    killpg(monitoring_proc.pid,signal.SIGINT)
     print('Cleaning up...')
     clean_up(cur_time)
     # killpg(monitor.pid, signal.SIGINT)

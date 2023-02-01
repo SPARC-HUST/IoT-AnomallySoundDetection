@@ -1,5 +1,8 @@
 import os
+from os import getpid, setpgrp, killpg
+from os.path import join, isdir, dirname
 import sys
+import signal
 import sklearn
 sys.path.append(os.getcwd())
 import tensorflow as tf
@@ -8,6 +11,10 @@ from core.DataLoader import Dataloader
 from core.Trainer import ModelTrainer
 from helper.parser import arg_parser 
 from config import update_config, get_cfg_defaults
+import psutil
+import subprocess
+
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 gpus = tf.config.list_physical_devices('GPU')
 
@@ -22,6 +29,7 @@ if gpus:
   except RuntimeError as e:
     # Visible devices must be set before GPUs have been initialized
     print(e)
+
 
 # if __name__ == '__main__':
 #   # merge config from yaml file
@@ -43,12 +51,7 @@ if gpus:
 #   base_trainer.compile()
 #   base_trainer.fit(data_dict)
 
-def base_training():
-  # merge config from yaml file
-  cfg = get_cfg_defaults()
-  config_file = arg_parser('Create Dataloader for further uses.')
-  cfg = update_config(cfg, config_file)
-
+def base_training(cfg):
   # make a dataloader
   data_loader = Dataloader(cfg)
   data_dict = {
@@ -62,7 +65,22 @@ def base_training():
   # compile and trainer
   base_trainer.compile()
   base_trainer.fit(data_dict)
-
   return 0
 
-base_training()
+# merge config from yaml file
+cfg = get_cfg_defaults()
+config_file = arg_parser('Create Dataloader for further uses.')
+cfg = update_config(cfg, config_file)
+root = dirname(__file__)
+monitoring = join(root, '../helper', 'Resource_monitoring.py')
+monitor_savepath = join(cfg.TRAINING.SAVE_PATH, 'mornitor')
+if not os.path.exists(monitor_savepath):
+  os.mkdir(monitor_savepath)
+pid = getpid()
+monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', monitoring, '-p', str(pid), '-log', monitor_savepath], 
+                                    preexec_fn=setpgrp)
+try:
+  base_training(cfg)
+  killpg(monitoring_proc.pid,signal.SIGINT)
+except KeyboardInterrupt:
+  killpg(pid,signal.SIGINT)
