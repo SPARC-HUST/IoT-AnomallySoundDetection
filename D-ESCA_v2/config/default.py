@@ -4,7 +4,7 @@ _C = CN()
 
 _C.PREPROCESS = CN()
 _C.PREPROCESS.TYPE = 'gamma'   # gamma or mels
-_C.PREPROCESS.AUDIO_LEN = 10   # second
+_C.PREPROCESS.AUDIO_LEN = 2   # second
 _C.PREPROCESS.SEGMENT_LEN = 2  # second
 _C.PREPROCESS.SAMPLE_PER_FILE = 200
 _C.PREPROCESS.GAMMA = CN() # define all parameters needed for gamma feature extraction
@@ -74,6 +74,10 @@ _C.RECORD.DEVICE_INDEX_INPUT = 0
 _C.RECORD.SECOND = 2
 _C.RECORD.CHANNELS = 1
 _C.RECORD.SAMPLING_RATE = 44100
+
+_C.DEVICE = CN()
+_C.DEVICE.JETSON = False
+
 def get_cfg_defaults():
   """Get a yacs CfgNode object with default values for my_project."""
   # Return a clone so that the defaults will not be altered

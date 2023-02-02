@@ -18,6 +18,7 @@ import subprocess
 from config import update_config, get_cfg_defaults
 from helper.parser import arg_parser 
 from helper.audio_cleanup import clean_up
+import psutil
 
 def testing(cfg = None, eval=None):
     # gate keeping check
@@ -143,6 +144,7 @@ root = dirname(__file__)
 cfg = get_cfg_defaults()
 config_file = arg_parser('Create Dataloader for further uses.')
 cfg = update_config(cfg, config_file)
+used_ram_init =  psutil.virtual_memory().used/1024/1024
 monitoring = join(root, '../helper', 'Resource_monitoring.py')
 monitor_savepath = join(cfg.REALTIME.LOG_PATH, 'mornitor')
 if not os.path.exists(monitor_savepath):
@@ -155,7 +157,7 @@ record_mic = join(root, '../helper','usbmictest.py')
 # record_mic = join(root, '../tools','create_dataset.py')
 
 try:
-    monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', monitoring, '-p', str(pid), '-log', monitor_savepath], 
+    monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', monitoring, '-p', str(pid), '-log', monitor_savepath, '-ri', str(int(used_ram_init)), '-cfg', './config/params.yaml'], 
                                     preexec_fn=setpgrp)
     audio_record = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', record_mic, '-cfg', './config/params.yaml'],
                                     preexec_fn=setpgrp)
