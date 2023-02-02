@@ -12,15 +12,20 @@ from os.path import join
 cfg = get_cfg_defaults()
 config_file = arg_parser('Create Dataloader for further uses.')
 cfg = update_config(cfg, config_file)
-
 def CPfile(output_file, base_file):
     if (os.path.exists(base_file) == False):
         shutil.copy2(output_file, base_file)
 
 RECORD_SECONDS = cfg.REALTIME.SECOND                         # Length of time to record (seconds)
                                             # File name to save the audio
-WAVE_OUTPUT_FILENAME = join(cfg.REALTIME.LOG_PATH,'record', 'output.wav')
-WAVE_BASE_FILENAME = join(cfg.REALTIME.LOG_PATH,'record','basefile.wav')
+WAVE_RECORD_PATH = join(cfg.REALTIME.LOG_PATH,'record')
+TEMP_PATH = join(cfg.REALTIME.LOG_PATH,'temp')
+if os.path.exists(WAVE_RECORD_PATH) == False:
+        os.mkdir(WAVE_RECORD_PATH)
+if os.path.exists(TEMP_PATH) == False:
+        os.mkdir(TEMP_PATH)       
+WAVE_OUTPUT_FILENAME = join(WAVE_RECORD_PATH, 'output.wav')
+WAVE_BASE_FILENAME = join(WAVE_RECORD_PATH,'basefile.wav')
 
 iDeviceIndex = cfg.REALTIME.DEVICE_INDEX_INPUT                   # Index number of recording device
 
