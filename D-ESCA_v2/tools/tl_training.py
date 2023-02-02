@@ -58,12 +58,7 @@ def load_all_files_from_dirs(list_of_dirs):
 #   base_trainer.compile()
 #   base_trainer.fit(data_dict)
 
-def tl_training():
-    # merge config from yaml file
-  cfg = get_cfg_defaults()
-  config_file = arg_parser('Create Dataloader for further uses.')
-  cfg = update_config(cfg, config_file)
-
+def tl_training(cfg):
   # prepare directories (can be integrated to Dataloader)
   # normal_files = load_all_files_from_dirs(cfg.TRANSFER_LEARNING.NORMAL_DATA_DIRS)
   # anomaly_file = load_all_files_from_dirs(cfg.TRANSFER_LEARNING.ANOMALY_DATA_DIRS)
@@ -89,7 +84,7 @@ config_file = arg_parser('Create Dataloader for further uses.')
 cfg = update_config(cfg, config_file)
 root = dirname(__file__)
 monitoring = join(root, '../helper', 'Resource_monitoring.py')
-monitor_savepath = join(cfg.TRAINING.SAVE_PATH, 'mornitor')
+monitor_savepath = join(cfg.TRANSFER_LEARNING.SAVE_PATH, 'mornitor')
 if not os.path.exists(monitor_savepath):
   os.mkdir(monitor_savepath)
 pid = getpid()

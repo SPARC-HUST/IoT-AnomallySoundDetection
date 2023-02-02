@@ -147,7 +147,7 @@ cur_time = now.strftime("%Y%m%d_%H%M%S")
 record_mic = join(root, '../helper','usbmictest.py')
 # record_mic = join(root, '../tools','create_dataset.py')
 monitoring = join(root, '../helper', 'Resource_monitoring.py')
-monitor_savepath = join(cfg.TRAINING.SAVE_PATH, 'mornitor')
+monitor_savepath = join(cfg.REALTIME.LOG_PATH, 'mornitor')
 if not os.path.exists(monitor_savepath):
   os.mkdir(monitor_savepath)
 pid = getpid()

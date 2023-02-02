@@ -86,7 +86,7 @@ def monitoring(pid, log_path):
         a2.set_ylabel("Usage (MB)")
         a2.legend(["CPU Memory", "GPU Memory"], loc ="best")
 
-        plt.suptitle("Surver Resouce")
+        plt.suptitle("Resource Monitoring")
         #plt.legend(["CPU", "Memory", "GPU", "GPU Memory"], loc ="best")
         plt.xlabel("Time(s)")
         #plt.ylabel("Percent(%)")
