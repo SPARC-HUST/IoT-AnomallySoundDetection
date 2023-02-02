@@ -25,7 +25,6 @@ def testing(cfg = None, eval=None):
 
     # load threshold and model from file
     # metric_path = cfg.POSTPROCESS.PATH_SAVE_THRESHOLD
-
     manual_threshold = cfg.REALTIME.MANUAL_THRESHOLD
     rtime = cfg.REALTIME.RUNTIME
     log_dir = cfg.TRANSFER_LEARNING.SAVE_PATH if cfg.REALTIME.TRANSFER_LEARNING  else cfg.TRAINING.SAVE_PATH
@@ -78,6 +77,8 @@ def testing(cfg = None, eval=None):
     plotting_graph = join(root, '../helper', 'plotting_graph.py')
     command = ['python3',plotting_graph, '-th', str(threshold), '-csv', csv_file]
     graph = subprocess.Popen(command, preexec_fn=setpgrp)
+
+
     # print('------------------1-----------------------')
 
     try:
@@ -119,7 +120,7 @@ def testing(cfg = None, eval=None):
                     print(f'Detect abnormal at {end - start}s from starting time.')
                 else:
                     print('Everything is normal.')
-            
+                
             except:
                 pass
 
@@ -131,8 +132,10 @@ def testing(cfg = None, eval=None):
 
         print('inferencing end.')
         # wait to input any key
-        var = input("Please input any key.")
+        # var = input("Please input any key.")
         killpg(graph.pid, signal.SIGINT)
+        # killpg(monitoring_proc.pid,signal.SIGINT)
+
 
     return 0
 
@@ -140,17 +143,17 @@ root = dirname(__file__)
 cfg = get_cfg_defaults()
 config_file = arg_parser('Create Dataloader for further uses.')
 cfg = update_config(cfg, config_file)
-
+monitoring = join(root, '../helper', 'Resource_monitoring.py')
+monitor_savepath = join(cfg.REALTIME.LOG_PATH, 'mornitor')
+if not os.path.exists(monitor_savepath):
+    os.mkdir(monitor_savepath)
+pid = getpid()
 prediction_list = []
 now = datetime.now()
 cur_time = now.strftime("%Y%m%d_%H%M%S")
 record_mic = join(root, '../helper','usbmictest.py')
 # record_mic = join(root, '../tools','create_dataset.py')
-monitoring = join(root, '../helper', 'Resource_monitoring.py')
-monitor_savepath = join(cfg.REALTIME.LOG_PATH, 'mornitor')
-if not os.path.exists(monitor_savepath):
-  os.mkdir(monitor_savepath)
-pid = getpid()
+
 try:
     monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', monitoring, '-p', str(pid), '-log', monitor_savepath], 
                                     preexec_fn=setpgrp)
