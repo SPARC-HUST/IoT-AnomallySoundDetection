@@ -83,5 +83,6 @@ monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 
 try:
   base_training(cfg)
   killpg(monitoring_proc.pid,signal.SIGINT)
-except KeyboardInterrupt:
+except KeyboardInterrupt:  
+  killpg(monitoring_proc.pid,signal.SIGINT)
   killpg(pid,signal.SIGINT)

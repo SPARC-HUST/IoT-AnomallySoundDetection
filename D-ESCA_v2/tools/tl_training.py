@@ -98,4 +98,5 @@ try:
   tl_training(cfg)
   killpg(monitoring_proc.pid,signal.SIGINT)
 except KeyboardInterrupt:
+  killpg(monitoring_proc.pid,signal.SIGINT)
   killpg(pid,signal.SIGINT)
