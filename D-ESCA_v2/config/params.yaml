@@ -6,18 +6,19 @@ DATASET:
     # TEST: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/source_test/Normal'
 
 TRAINING: 
-  SAVE_PATH : '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/base-training_results'
-  EPOCH : 75
+  SAVE_PATH : '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/base-training_results'
+  EPOCH : 200
 
 TRANSFER_LEARNING: 
+  EPOCH : 2
   NORMAL_DATA_DIRS: '/home/thanhho/SPARC/ESCA/Code/Data/park_demo/tfrecord_target_park/train'
   ANOMALY_DATA_DIRS: '/home/thanhho/SPARC/ESCA/Code/Data/park_demo/tfrecord_target_park/anomaly'
-  BASED_WEIGHTS: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/base-training_results/saved_model/vq_vae'
-  SAVE_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/tl-training_results'
+  BASED_WEIGHTS: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/base-training_results/saved_model/vq_vae'
+  SAVE_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/tl-training_results'
 
 REALTIME: 
   DEVICE_INDEX_INPUT: 18
-  LOG_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/rt_test_results'
+  LOG_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/rt_test_results'
   TRANSFER_LEARNING: True
 
 RECORD: 
@@ -27,4 +28,4 @@ RECORD:
   DATASET_PATH: './dataset'
 
 DEVICE:
-  JETSON: True
+  JETSON: False
