@@ -4,6 +4,7 @@ from core.Models import get_model
 from core.Preprocessing import Preprocessor
 from core.Postprocessing import Postprocessor
 from datetime import datetime
+import os
 from os.path import join
 from os import makedirs
 
@@ -12,6 +13,8 @@ class ModelTrainer():
         # important parameters for training
         self.model_name = cfg.MODEL.TYPE 
         self.log_dir = cfg.TRAINING.SAVE_PATH
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
         self.epochs = cfg.TRAINING.EPOCH
         self.learning_rate = cfg.TRAINING.LEARNING_RATE
         # self.theshold_save_path =  cfg.POSTPROCESS.PATH_SAVE_THRESHOLD

@@ -148,7 +148,7 @@ used_ram_init =  psutil.virtual_memory().used/1024/1024
 monitoring = join(root, '../helper', 'Resource_monitoring.py')
 monitor_savepath = join(cfg.REALTIME.LOG_PATH, 'mornitor')
 if not os.path.exists(monitor_savepath):
-    os.mkdir(monitor_savepath)
+    os.makedirs(monitor_savepath)
 pid = getpid()
 prediction_list = []
 now = datetime.now()

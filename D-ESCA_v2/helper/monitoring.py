@@ -1,4 +1,5 @@
 import psutil
+import GPUtil
 from time import sleep
 import json
 from argparse import ArgumentParser

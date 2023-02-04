@@ -22,7 +22,7 @@ def recoder(cfg):
         WAVE_OUTPUT_PATH = join(cfg.RECORD.DATASET_PATH,'abnomaly')
 
     if os.path.exists(WAVE_OUTPUT_PATH) == False:
-        os.mkdir(WAVE_OUTPUT_PATH)
+        os.makedirs(WAVE_OUTPUT_PATH)
     iDeviceIndex = cfg.RECORD.DEVICE_INDEX_INPUT        # Index number of recording device
 
         # Basic Information Settings

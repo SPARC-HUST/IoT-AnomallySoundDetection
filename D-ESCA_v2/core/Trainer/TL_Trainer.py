@@ -1,5 +1,6 @@
 import tensorflow as tf
 from core.Trainer import ModelTrainer
+import os
 from os.path import join
 from datetime import datetime
 from core.Preprocessing import Preprocessor
@@ -10,6 +11,8 @@ class TL_Trainer(ModelTrainer):
         # super().__init__(cfg)
         self.model_name = cfg.MODEL.TYPE 
         self.log_dir = cfg.TRANSFER_LEARNING.SAVE_PATH
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
         self.learning_rate = cfg.TRANSFER_LEARNING.LEARNING_RATE
         self.epochs = cfg.TRANSFER_LEARNING.EPOCH
         self._setup_logger()

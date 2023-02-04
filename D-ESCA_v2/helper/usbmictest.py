@@ -21,9 +21,9 @@ RECORD_SECONDS = cfg.REALTIME.SECOND                         # Length of time to
 WAVE_RECORD_PATH = join(cfg.REALTIME.LOG_PATH,'record')
 TEMP_PATH = join(cfg.REALTIME.LOG_PATH,'temp')
 if os.path.exists(WAVE_RECORD_PATH) == False:
-        os.mkdir(WAVE_RECORD_PATH)
+        os.makedirs(WAVE_RECORD_PATH)
 if os.path.exists(TEMP_PATH) == False:
-        os.mkdir(TEMP_PATH)       
+        os.makedirs(TEMP_PATH)       
 WAVE_OUTPUT_FILENAME = join(WAVE_RECORD_PATH, 'output.wav')
 WAVE_BASE_FILENAME = join(WAVE_RECORD_PATH,'basefile.wav')
 

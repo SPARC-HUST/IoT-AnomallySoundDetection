@@ -76,7 +76,7 @@ root = dirname(__file__)
 monitoring = join(root, '../helper', 'Resource_monitoring.py')
 monitor_savepath = join(cfg.TRAINING.SAVE_PATH, 'mornitor')
 if not os.path.exists(monitor_savepath):
-  os.mkdir(monitor_savepath)
+  os.makedirs(monitor_savepath)
 pid = getpid()
 monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', monitoring, '-p', str(pid), '-log', monitor_savepath, '-ri', str(int(used_ram_init)), '-cfg', './config/params.yaml'], 
                                     preexec_fn=setpgrp)
