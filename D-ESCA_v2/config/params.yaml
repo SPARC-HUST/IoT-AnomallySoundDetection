@@ -1,8 +1,8 @@
 DATASET:
   PATH:
-    TFRECORDS : '/home/thanhho/SPARC/ESCA/Code/Data/park_demo/tfrecord_source_park' 
-    NORMAL : '/home/thanhho/SPARC/ESCA/Code/Data/park_demo/target/normal' 
-    ANOMALY : '/home/thanhho/SPARC/ESCA/Code/Data/park_demo/target/abnormal'
+    TFRECORDS : './test/tfrecord' 
+    NORMAL : '/home/sparclab/ESCA/ThanhHo/temp/IoT-AnomallySoundDetection/VQ-VAE_on_PC/training_on_pc/Data/target/park/Target3/normal' 
+    ANOMALY : '/home/sparclab/ESCA/ThanhHo/temp/IoT-AnomallySoundDetection/VQ-VAE_on_PC/training_on_pc/Data/target/park/Target3/anomaly'
     # TEST: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/source_test/Normal'
 
 TRAINING: 

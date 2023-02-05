@@ -46,6 +46,15 @@ class Dataloader(Feature_extractor):
         self.batch_size = cfg.DATASET.DATALOADER.BATCH_SIZE
         self.shuffle = cfg.DATASET.DATALOADER.SHUFFLE
 
+        self._init_feature_description()
+
+    def _init_feature_description(self):
+        self.feature_description = {
+            'feature':  tf.io.FixedLenFeature([], tf.string),
+            'label':    tf.io.FixedLenFeature([], tf.string),
+            'idx':      tf.io.FixedLenFeature([], tf.string),
+        }
+
     def _check_npz(self):
         return 'npz' in os.listdir(self.src_data_dir['normal'])[0]
 
@@ -89,15 +98,15 @@ class Dataloader(Feature_extractor):
         self._check_directories()
         self.impl_func()
 
-    def _create_tfrecord_from_wav(self):
-        def _bytes_feature(value):
-            """Returns a bytes_list from a string / byte."""
-            # first serialize the input
-            value = tf.io.serialize_tensor(value)
-            if isinstance(value, type(tf.constant(0))):
-                value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
-            return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+    def _bytes_feature(self, value):
+        """Returns a bytes_list from a string / byte."""
+        # first serialize the input
+        value = tf.io.serialize_tensor(value)
+        if isinstance(value, type(tf.constant(0))):
+            value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
+        return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
+    def _create_tfrecord_from_wav(self):
         time_per_sample = self.segment_len*1000  # time is processed in millisecond
         rate = self.audio_len//self.segment_len
         # read all files in the directory
@@ -150,9 +159,9 @@ class Dataloader(Feature_extractor):
                                 for feature, id in zip(feature_list, idx_list):    
                                     temp = tf.train.Example(features=tf.train.Features(
                                         feature={
-                                            'feature':  _bytes_feature(feature.astype(np.float32)),
-                                            'label':    _bytes_feature(label),
-                                            'idx':      _bytes_feature(id),
+                                            'feature':  self._bytes_feature(feature.astype(np.float32)),
+                                            'label':    self._bytes_feature(label),
+                                            'idx':      self._bytes_feature(id),
                                         }
                                     )).SerializeToString()
                                     writer.write(temp)
@@ -169,30 +178,83 @@ class Dataloader(Feature_extractor):
                 if 'test' in data_part:      
                     test_id_holder = record_idx
 
-    def _create_tfrecord_from_npz(self):
-        pass
+    def _create_tfrecord_from_npz(self, use_anomaly=False):
+        '''
+            Load already extracted features from .npz file and save them to .tfrecord files.
+            First, we load all samples into respected list.
+            Then create tfrecord accordingly
+        '''
+        # Define a specialized function here
+        def save_tfrecord_from_nparray(data, data_type, idx_list=None, anomaly_set=False):
+            label = 1 if anomaly_set else 0
+            idx_list = ['unknown']*data.shape[0] if not idx_list else idx_list
+
+            record_num = np.ceil(data.shape[0]/self.sample_per_file).astype(np.int16)
+            remainder = data.shape[0]%self.sample_per_file
+
+            for i in range(record_num):
+                file_path = os.path.join(self.tfrecord_dir[data_type], f'data_{i:08}.tfrecord')
+                sample_num = self.sample_per_file if i != (record_num-1) else remainder
+                start_id = i*self.sample_per_file
+                with tf.io.TFRecordWriter(file_path) as writer:
+                    for sample_id in range(sample_num):    
+                        temp = tf.train.Example(features=tf.train.Features(
+                            feature={
+                                'feature':  self._bytes_feature(data[start_id + sample_id].astype(np.float32)),
+                                'label':    self._bytes_feature(label),
+                                'idx':      self._bytes_feature(idx_list[start_id + sample_id]),
+                            }
+                        )).SerializeToString()
+                        writer.write(temp)
+                # copy anomaly tfrecord files to another directory
+                if anomaly_set:
+                    copy(file_path, os.path.join(self.anomaly_tfrecord_dir, os.path.split(file_path)[-1]))
+
+
+        # Load all sample and ids (from .json file)
+        dict_of_samples_list = {
+            'normal': [],
+            'anomaly': [],
+        }
+        
+        for part, directory in self.src_data_dir.items():
+            file_list = read_file_name(directory)
+            for file in file_list:
+                dict_of_samples_list[part].append(np.load(file)['arr_0'])
+
+        # Divide normal data into train, val and test set using indices
+        sample_array = np.concatenate(dict_of_samples_list['normal'], axis=0)
+        sample_num = sample_array.shape[0]
+        train_idx = int(self.train_data_ratio*sample_num)
+        test_idx = int(self.test_data_ratio*sample_num)
+        train_set = sample_array[:train_idx]
+        test_normal = sample_array[train_idx:train_idx+test_idx]
+        val_set = sample_array[train_idx+test_idx:]
+
+        # Using the specialized function that will save tfrecord
+        for data_set, name in zip([train_set, test_normal, val_set], ['train', 'test', 'val']):
+            save_tfrecord_from_nparray(data=data_set, data_type=name, anomaly_set=False)
+
+        # Do the same for anomaly set if use_anomaly=True
+        if use_anomaly:
+            sample_array = np.concatenate(dict_of_samples_list['anomaly'], axis=0)
+            save_tfrecord_from_nparray(data=sample_array, data_type='test', anomaly_set=True)
 
     def _check_idx_exist(self):
         pass
 
+    def _parse_function(self, input_proto):
+        # Parse the input `tf.train.Example` proto using the dictionary feature_description.
+        parsed_sample = tf.io.parse_single_example(input_proto, self.feature_description)
+        return  (tf.io.parse_tensor(parsed_sample['feature'], tf.float32), \
+                tf.io.parse_tensor(parsed_sample['label'], tf.int32), parsed_sample['idx'])
+
     def create_dataloader(self, data_part, batch_size=None):
-        feature_description = {
-            'feature':  tf.io.FixedLenFeature([], tf.string),
-            'label':    tf.io.FixedLenFeature([], tf.string),
-            'idx':      tf.io.FixedLenFeature([], tf.string),
-        }
-
-        def _parse_function(input_proto):
-            # Parse the input `tf.train.Example` proto using the dictionary feature_description.
-            parsed_sample = tf.io.parse_single_example(input_proto, feature_description)
-            return  (tf.io.parse_tensor(parsed_sample['feature'], tf.float32), \
-                    tf.io.parse_tensor(parsed_sample['label'], tf.int32), parsed_sample['idx'])
-
         abs_path = lambda x: os.path.join(self.tfrecord_dir[data_part], x)
         tfrecords_list = list(map(abs_path, os.listdir(self.tfrecord_dir[data_part])))
 
         dataset = tf.data.TFRecordDataset(tfrecords_list)
-        parsed_dataset = dataset.map(_parse_function)
+        parsed_dataset = dataset.map(self._parse_function)
         bs = batch_size if batch_size else self.batch_size
         if self.shuffle:
             parsed_dataset = parsed_dataset.shuffle(buffer_size=1000)
@@ -200,20 +262,8 @@ class Dataloader(Feature_extractor):
         return parsed_dataset.batch(batch_size=bs)
 
     def create_dataloader_from_files(self, list_of_files, batch_size=None):
-        feature_description = {
-            'feature':  tf.io.FixedLenFeature([], tf.string),
-            'label':    tf.io.FixedLenFeature([], tf.string),
-            'idx':      tf.io.FixedLenFeature([], tf.string),
-        }
-
-        def _parse_function(input_proto):
-            # Parse the input `tf.train.Example` proto using the dictionary feature_description.
-            parsed_sample = tf.io.parse_single_example(input_proto, feature_description)
-            return  (tf.io.parse_tensor(parsed_sample['feature'], tf.float32), \
-                    tf.io.parse_tensor(parsed_sample['label'], tf.int32), parsed_sample['idx'])
-
         dataset = tf.data.TFRecordDataset(list_of_files)
-        parsed_dataset = dataset.map(_parse_function)
+        parsed_dataset = dataset.map(self._parse_function)
         bs = batch_size if batch_size else self.batch_size
         if self.shuffle:
             parsed_dataset = parsed_dataset.shuffle(buffer_size=1000)
