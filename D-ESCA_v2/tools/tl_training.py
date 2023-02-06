@@ -69,12 +69,12 @@ def tl_training(cfg):
   data_loader = Dataloader(cfg)
   data_dict = {
     # 'train': data_loader.create_dataloader_from_files(normal_files),
-    'train': data_loader.create_dataloader('normal_tl'),
-    'test': data_loader.create_dataloader('test'),
-    'val': data_loader.create_dataloader('val'),
+    'train': data_loader.create_tl_dataloader('train'),
+    'test': data_loader.create_tl_dataloader('test'),
+    'val': data_loader.create_tl_dataloader('val'),
   }
   # training_anomaly = data_loader.create_dataloader_from_files(anomaly_file)
-  training_anomaly = data_loader.create_dataloader('anomaly_tl')
+  training_anomaly = data_loader.create_tl_dataloader('anomaly')
   # define a trainer
   base_trainer = TL_Trainer(cfg, training_anomaly=training_anomaly)
   # compile and trainer
@@ -98,5 +98,5 @@ try:
   tl_training(cfg)
   killpg(monitoring_proc.pid,signal.SIGINT)
 except KeyboardInterrupt:
-  killpg(monitoring_proc.pid,signal.SIGINT)
+  # killpg(monitoring_proc.pid,signal.SIGINT)
   killpg(pid,signal.SIGINT)

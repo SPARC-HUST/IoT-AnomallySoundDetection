@@ -24,19 +24,23 @@ class Dataloader(Feature_extractor):
             'anomaly':  cfg.DATASET.PATH.ANOMALY,
         }
         self.test_data_dir = cfg.DATASET.PATH.TEST
+        
+        self.base_tfrecord_list = cfg.DATASET.PATH.TFRECORDS
+        self.target_tfrecord_list = cfg.TRANSFER_LEARNING.TFRECORDS
+
         self.tfrecord_dir = {
-            'train':    os.path.join(cfg.DATASET.PATH.TFRECORDS, 'train'),
-            'val':      os.path.join(cfg.DATASET.PATH.TFRECORDS, 'val'),
-            'test':     os.path.join(cfg.DATASET.PATH.TFRECORDS, 'test'),
-            'normal_tl':  os.path.join(cfg.DATASET.PATH.TFRECORDS, 'train'),
-            'anomaly_tl': os.path.join(cfg.DATASET.PATH.TFRECORDS, 'anomaly'),
+            'train':    os.path.join(self.base_tfrecord_list[0], 'train'),
+            'val':      os.path.join(self.base_tfrecord_list[0], 'val'),
+            'test':     os.path.join(self.base_tfrecord_list [0], 'test'),
+            'normal_tl':  os.path.join(self.base_tfrecord_list[0], 'train'),
+            'anomaly_tl': os.path.join(self.base_tfrecord_list[0], 'anomaly'),
         }
-        self.stat_path = cfg.DATASET.PATH.TFRECORDS
+        self.stat_path = self.base_tfrecord_list[0]
         self.impl_func = {
             'npz': self._create_tfrecord_from_npz,
             'wav': self._create_tfrecord_from_wav,
         }['npz' if self._check_npz() else 'wav']
-        self.anomaly_tfrecord_dir = os.path.join(cfg.DATASET.PATH.TFRECORDS, 'anomaly')
+        self.anomaly_tfrecord_dir = os.path.join(self.base_tfrecord_list[0], 'anomaly')
         os.makedirs(self.anomaly_tfrecord_dir, exist_ok=True)
 
         self.train_data_ratio = cfg.DATASET.RATIO.TRAIN
@@ -259,7 +263,15 @@ class Dataloader(Feature_extractor):
         if self.shuffle:
             parsed_dataset = parsed_dataset.shuffle(buffer_size=1000)
 
-        return parsed_dataset.batch(batch_size=bs)
+        return parsed_dataset.batch(batch_size=bs).prefetch(tf.data.AUTOTUNE)
+
+    def create_tl_dataloader(self, data_part, batch_size=None):
+        tfrecords_list = []
+        record_list = self.base_tfrecord_list if data_part != 'test' else self.target_tfrecord_list
+        for dir in record_list:
+            tfrecords_list += read_file_name(os.path.join(dir, data_part))
+        
+        return self.create_dataloader_from_files(tfrecords_list, batch_size)
 
     def create_dataloader_from_files(self, list_of_files, batch_size=None):
         dataset = tf.data.TFRecordDataset(list_of_files)
@@ -268,7 +280,7 @@ class Dataloader(Feature_extractor):
         if self.shuffle:
             parsed_dataset = parsed_dataset.shuffle(buffer_size=1000)
 
-        return parsed_dataset.batch(batch_size=bs)
+        return parsed_dataset.batch(batch_size=bs).prefetch(tf.data.AUTOTUNE)
 
     def accumulate_stat(self):
         train_data = self.create_dataloader('train', 1)

@@ -22,7 +22,7 @@ _C.DATASET.PATH = CN()
 _C.DATASET.PATH.NORMAL = './Data/fan/source'  # directory of normal training data
 _C.DATASET.PATH.TEST = None # directory to test dataset. If this is None then part of normal training data will be used for test
 _C.DATASET.PATH.ANOMALY = './Data/fan/target' # directory of anomaly dataset (only use for testing)
-_C.DATASET.PATH.TFRECORDS = ''
+_C.DATASET.PATH.TFRECORDS = []
 _C.DATASET.RATIO = CN() # specify the ratio of normal data for training and testing. The remaining will be used for validating
 _C.DATASET.RATIO.TRAIN = 0.8
 _C.DATASET.RATIO.TEST = 0.1 # if DATASET.PATH.TEST is not assigned, test data will be from normal training data with this ratio
@@ -41,8 +41,7 @@ _C.TRAINING.SAVE_PATH = './Results'
 
 # paramters specifically for transfer learning
 _C.TRANSFER_LEARNING = CN()
-_C.TRANSFER_LEARNING.NORMAL_DATA_DIRS = None
-_C.TRANSFER_LEARNING.ANOMALY_DATA_DIRS = None
+_C.TRANSFER_LEARNING.TFRECORDS = []
 _C.TRANSFER_LEARNING.TEST_DIR = None
 _C.TRANSFER_LEARNING.EPOCH = 3
 _C.TRANSFER_LEARNING.LEARNING_RATE = 1e-3

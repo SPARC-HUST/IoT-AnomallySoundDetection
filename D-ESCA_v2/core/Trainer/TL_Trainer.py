@@ -17,7 +17,7 @@ class TL_Trainer(ModelTrainer):
         self.epochs = cfg.TRANSFER_LEARNING.EPOCH
         self._setup_logger()
         self._setup_metrics()
-        self.pre_prc = Preprocessor(cfg)
+        self.pre_prc = Preprocessor(cfg, tl=True)
         self.post_prc = Postprocessor(cfg)
 
         self.impl_steps = {
