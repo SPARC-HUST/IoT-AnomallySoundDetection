@@ -27,7 +27,6 @@ class Dataloader(Feature_extractor):
         
         self.base_tfrecord_list = cfg.DATASET.PATH.TFRECORDS
         self.target_tfrecord_list = cfg.TRANSFER_LEARNING.TFRECORDS
-
         self.tfrecord_dir = {
             'train':    os.path.join(self.base_tfrecord_list[0], 'train'),
             'val':      os.path.join(self.base_tfrecord_list[0], 'val'),
@@ -195,25 +194,34 @@ class Dataloader(Feature_extractor):
 
             record_num = np.ceil(data.shape[0]/self.sample_per_file).astype(np.int16)
             remainder = data.shape[0]%self.sample_per_file
+            remainder_after_remove_faulty = remainder
 
             for i in range(record_num):
                 file_path = os.path.join(self.tfrecord_dir[data_type], f'data_{i:08}.tfrecord')
-                sample_num = self.sample_per_file if i != (record_num-1) else remainder
+                sample_num = self.sample_per_file if i != (record_num-1) else remainder_after_remove_faulty
                 start_id = i*self.sample_per_file
+                if sample_num <= 0:
+                    break
                 with tf.io.TFRecordWriter(file_path) as writer:
-                    for sample_id in range(sample_num):    
-                        temp = tf.train.Example(features=tf.train.Features(
-                            feature={
-                                'feature':  self._bytes_feature(data[start_id + sample_id].astype(np.float32)),
-                                'label':    self._bytes_feature(label),
-                                'idx':      self._bytes_feature(idx_list[start_id + sample_id]),
-                            }
-                        )).SerializeToString()
-                        writer.write(temp)
+                    for sample_id in range(sample_num):
+                        if sample_id >= remainder_after_remove_faulty:
+                            break
+                        sample = data[start_id + sample_id]
+                        if sample.shape == (32,32):    
+                            temp = tf.train.Example(features=tf.train.Features(
+                                feature={
+                                    'feature':  self._bytes_feature(sample.astype(np.float32)),
+                                    'label':    self._bytes_feature(label),
+                                    'idx':      self._bytes_feature(idx_list[start_id + sample_id]),
+                                }
+                            )).SerializeToString()
+                            writer.write(temp)
+                        else:
+                            print('Detecting faulty sample')
+                            remainder_after_remove_faulty -= 1
                 # copy anomaly tfrecord files to another directory
                 if anomaly_set:
                     copy(file_path, os.path.join(self.anomaly_tfrecord_dir, os.path.split(file_path)[-1]))
-
 
         # Load all sample and ids (from .json file)
         dict_of_samples_list = {
