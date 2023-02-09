@@ -1,24 +1,24 @@
 DATASET:
   PATH:
-    TFRECORDS : ['/home/sparclab/ESCA/ThanhHo/tfrecord/source' ]
-    NORMAL : '/home/sparclab/ESCA/ThanhHo/temp/IoT-AnomallySoundDetection/VQ-VAE_on_PC/training_on_pc/Data/park/normal'
-    ANOMALY : '/home/sparclab/ESCA/ThanhHo/temp/IoT-AnomallySoundDetection/VQ-VAE_on_PC/training_on_pc/Data/park/anomaly'
+    TFRECORDS : ['./source','/home/thanhho/SPARC/ESCA/Code/training_on_pc/Data/tfrecord/target/Target1','/home/thanhho/SPARC/ESCA/Code/training_on_pc/Data/tfrecord/target/Target2']
+    NORMAL : '/home/thanhho/SPARC/ESCA/Code/training_on_pc/Data/target/park/Target1/normal'
+    ANOMALY : '/home/thanhho/SPARC/ESCA/Code/training_on_pc/Data/target/park/Target1/anomaly'
     # TEST: '/home/thanhho/SPARC/ESCA/Code/Data/dev_data_fan/fan/source_test/Normal'
 
 TRAINING: 
-  SAVE_PATH : '/home/sparclab/ESCA/ThanhHo/temp/IoT-AnomallySoundDetection/D-ESCA_v2/Results/base_training'
+  SAVE_PATH : '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/base_training'
   EPOCH : 75
 
 TRANSFER_LEARNING: 
-  EPOCH : 200
-  TFRECORDS : ['/home/sparclab/ESCA/ThanhHo/tfrecord/target']
-  BASED_WEIGHTS: '/home/sparclab/ESCA/ThanhHo/temp/IoT-AnomallySoundDetection/D-ESCA_v2/Results/base_training/saved_model/vq_vae'
-  SAVE_PATH: '/home/sparclab/ESCA/ThanhHo/temp/IoT-AnomallySoundDetection/D-ESCA_v2/Results/tl-training'
-
+  EPOCH : 81
+  TFRECORDS : ['/home/thanhho/SPARC/ESCA/Code/training_on_pc/Data/tfrecord/target/Target3']
+  BASED_WEIGHTS: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/tl-training/Target2/saved_model/vq_vae'
+  SAVE_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/tl-training/Target3'
 REALTIME: 
-  DEVICE_INDEX_INPUT: 18
+  DEVICE_INDEX_INPUT: 7
   LOG_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/rt_test_results'
-  TRANSFER_LEARNING: True
+  TRANSFER_LEARNING: False
+  MANUAL_THRESHOLD: 0.0
 
 RECORD: 
   DEVICE_INDEX_INPUT: 18

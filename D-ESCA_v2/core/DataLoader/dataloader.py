@@ -35,10 +35,6 @@ class Dataloader(Feature_extractor):
             'anomaly_tl': os.path.join(self.base_tfrecord_list[0], 'anomaly'),
         }
         self.stat_path = self.base_tfrecord_list[0]
-        self.impl_func = {
-            'npz': self._create_tfrecord_from_npz,
-            'wav': self._create_tfrecord_from_wav,
-        }['npz' if self._check_npz() else 'wav']
         self.anomaly_tfrecord_dir = os.path.join(self.base_tfrecord_list[0], 'anomaly')
         os.makedirs(self.anomaly_tfrecord_dir, exist_ok=True)
 
@@ -98,6 +94,10 @@ class Dataloader(Feature_extractor):
         return data_dict
 
     def create_tfrecord(self):
+        self.impl_func = {
+            'npz': self._create_tfrecord_from_npz,
+            'wav': self._create_tfrecord_from_wav,
+        }['npz' if self._check_npz() else 'wav']
         self._check_directories()
         self.impl_func()
 

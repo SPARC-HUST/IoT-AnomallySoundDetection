@@ -72,7 +72,7 @@ class TL_Trainer(ModelTrainer):
                         tf.sigmoid(anom_loss - sample_wise_loss)
                 )
         return {'reconstruction_loss': tf.reduce_mean(sample_wise_loss), \
-                'supervised_loss': supervised_loss}, tf.squeeze(sample_wise_loss)
+                'supervised_loss': -1*supervised_loss}, tf.squeeze(sample_wise_loss)
 
     def _anomaly_loss(self):
         temp = []
