@@ -1,20 +1,20 @@
 from pydub import AudioSegment
 from os.path import join, isdir
-from os import listdir, remove, mkdir
+from os import listdir, remove, mkdir, makedirs
 from os.path import dirname
 
 
 def clean_up(file_name):
     # making directory
     root = dirname(__file__)
-    sub_dir = 'Data/history'
+    sub_dir = '../Results/rt_test_results/history'
     folder = file_name.split('_')[0]
     path = join(root,sub_dir,folder)
     if not isdir(path):
-        mkdir(path)
+        makedirs(path)
 
     # prepare the file
-    audio_loc = join(root, 'test_samples/temp')
+    audio_loc = join(root, '../Results/rt_test_results/temp')
     audio_2s = sorted(listdir(audio_loc))
     audio_list = [join(audio_loc, a) for a in audio_2s]
 

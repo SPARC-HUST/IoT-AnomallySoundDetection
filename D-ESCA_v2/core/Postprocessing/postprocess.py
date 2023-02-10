@@ -7,7 +7,7 @@ from os.path import join, isdir
 from gammatone import plot
 from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve
 import json
-from os import mkdir
+from os import mkdir, makedirs
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -62,7 +62,7 @@ class Postprocessor():
     def save_threshold(self,predictions, true_labels, max, min, path_to_save):
         path = path_to_save
         if not isdir(path):
-            mkdir(path)
+            makedirs(path)
 
         precision, recall, thresholds = precision_recall_curve(true_labels, predictions)
         threshold = thresholds[np.argmax(precision+recall)]
