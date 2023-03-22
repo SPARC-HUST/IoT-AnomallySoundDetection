@@ -7,14 +7,16 @@ sys.path.append(os.getcwd())
 from config import update_config, get_cfg_defaults
 from helper.parser import arg_parser 
 from os.path import join
+from os import listdir, getpid, scandir, rename, environ, remove, setpgrp, killpg,_exit
 
 
 cfg = get_cfg_defaults()
 config_file = arg_parser('Create Dataloader for further uses.')
 cfg = update_config(cfg, config_file)
-def CPfile(output_file, base_file):
+def CPfile(output_file, base_file, temp_file):
     if (os.path.exists(base_file) == False):
-        shutil.copy2(output_file, base_file)
+        shutil.copy2(output_file, temp_file)
+        rename(temp_file, base_file)
 
 RECORD_SECONDS = cfg.REALTIME.SECOND                         # Length of time to record (seconds)
                                             # File name to save the audio
@@ -26,6 +28,7 @@ if os.path.exists(TEMP_PATH) == False:
         os.makedirs(TEMP_PATH)       
 WAVE_OUTPUT_FILENAME = join(WAVE_RECORD_PATH, 'output.wav')
 WAVE_BASE_FILENAME = join(WAVE_RECORD_PATH,'basefile.wav')
+WAVE_TEMP_FILENAME = join(WAVE_RECORD_PATH,'temp.wav')
 
 iDeviceIndex = cfg.REALTIME.DEVICE_INDEX_INPUT                   # Index number of recording device
 
@@ -62,7 +65,7 @@ try:
         except:
             print("os.system() failed")
         print("End cre Audio file")
-        CPfile(WAVE_OUTPUT_FILENAME, WAVE_BASE_FILENAME)
+        CPfile(WAVE_OUTPUT_FILENAME, WAVE_BASE_FILENAME, WAVE_TEMP_FILENAME)
         if (os.path.exists(WAVE_OUTPUT_FILENAME) == True):
             os.remove(WAVE_OUTPUT_FILENAME)
 except KeyboardInterrupt as e:
