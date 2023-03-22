@@ -103,6 +103,7 @@ def testing(cfg = None, eval=None):
                 if(a.shape != (1, 32, 32, 1)):
                     print("Input shape Error:")
                     print(a.shape)
+                    os.remove(join(sample_loc, 'basefile.wav'))
                     continue
                 pred = np.mean((a-model.predict(a))**2)
                 type = 1 if pred > threshold else 0
@@ -120,7 +121,7 @@ def testing(cfg = None, eval=None):
                 if type == 1:
                     print(f'Detect abnormal at {end - start}s from starting time.')
                 else:
-                    print('Everything is normal.')
+                    print('Normal at {end - start}s from starting time..')
                 
             except:
                 pass
@@ -153,15 +154,20 @@ pid = getpid()
 prediction_list = []
 now = datetime.now()
 cur_time = now.strftime("%Y%m%d_%H%M%S")
-record_mic = join(root, '../helper','usbmictest.py')
+if(cfg.REALTIME.IMPORT_FILE == False):
+    record_mic = join(root, '../helper','usbmictest.py')
+else:
+    record_mic = join(root, '../helper','import_wav_files.py')
 # record_mic = join(root, '../tools','create_dataset.py')
 
 try:
     monitoring_proc = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', monitoring, '-p', str(pid), '-log', monitor_savepath, '-ri', str(int(used_ram_init)), '-cfg', './config/params.yaml'], 
                                     preexec_fn=setpgrp)
+
     audio_record = subprocess.Popen(['gnome-terminal', '--disable-factory','--', 'python3', record_mic, '-cfg', './config/params.yaml'],
                                     preexec_fn=setpgrp)
-    # print('------------------2-----------------------')
+   
+       # print('------------------2-----------------------')
     save_file = testing(cfg= cfg, eval=prediction_list)
     killpg(audio_record.pid, signal.SIGINT)
     killpg(monitoring_proc.pid,signal.SIGINT)
