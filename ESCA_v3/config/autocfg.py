@@ -21,6 +21,7 @@ def get_name(path):
     return name
 
 def create_folder(path, folderName):
+    path = os.path.normpath(path)
     folderPath = os.path.join(path, folderName)
     if os.path.exists(folderPath):
         pass
@@ -69,7 +70,7 @@ def switch_result_path(impMethod):
 BASE_DATA_PATH = cfg.DATA.PATH.BASEPATH
 DATA_SOURCE = cfg.DATA.SOURCE
 DATASET_NAME = get_name(DATA_SOURCE)
-# init_data_path(BASE_DATA_PATH)
+init_data_path(BASE_DATA_PATH)
 
 DATA_PATH = {
     "raw": os.path.join(BASE_DATA_PATH, 'raw', DATASET_NAME),
