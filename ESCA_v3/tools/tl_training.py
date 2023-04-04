@@ -62,9 +62,6 @@ def load_all_files_from_dirs(list_of_dirs):
 #   base_trainer.fit(data_dict)
 
 def tl_training(cfg):
-  # prepare directories (can be integrated to Dataloader)
-  # normal_files = load_all_files_from_dirs(cfg.TRANSFER_LEARNING.NORMAL_DATA_DIRS)
-  # anomaly_file = load_all_files_from_dirs(cfg.TRANSFER_LEARNING.ANOMALY_DATA_DIRS)
   # make a dataloader
   data_loader = Dataloader(cfg)
   data_dict = {

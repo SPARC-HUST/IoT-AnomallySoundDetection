@@ -9,8 +9,6 @@ sys.path.append(os.getcwd())
 from config import autocfg
 from config.autocfg import create_folder, get_name
 
-
-
 def get_list_dir(path):
     '''
     a function goes through directoty and gives back list of files
@@ -24,13 +22,14 @@ def get_list_dir(path):
 
     return file_list
 
-
 def split_data(src, dst, length=10):
     '''
     a function segment the audio file to desired length in second
+    __________
+    src is the source folder
+    dst is the destination folder
     '''
-    # src is the source folder
-    # dst is the destination folder
+
     src = normpath(src)
     dst = normpath(dst)
     timePerFile = length*1000  # time is processed in millisecond
@@ -51,7 +50,6 @@ def split_data(src, dst, length=10):
             chunkName = fileName[:-4] + '_' + str(index) + '.wav'
             item.export(join(dst, chunkName), format='wav')
     return 0
-
 
 if __name__ == '__main__':
     # sources and destinations are folders that contain audio files

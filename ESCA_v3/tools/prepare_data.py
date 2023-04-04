@@ -24,8 +24,8 @@ if gpus:
 if __name__ == '__main__':
     # update config based on default.yaml file
     cfg = get_cfg_defaults()
-    config_file = arg_parser('Create Dataloader for further uses.')
-    cfg = update_config(cfg, config_file)
+    # config_file = arg_parser('Create Dataloader for further uses.')
+    cfg = update_config(cfg, '.\config\params.yaml')
 
     # initiate a feature_extractor with all parameters from cfg
     data_loader = Dataloader(cfg)
