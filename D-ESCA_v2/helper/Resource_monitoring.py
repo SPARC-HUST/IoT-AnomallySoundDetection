@@ -50,7 +50,7 @@ def monitoring(isRunInJetsonDevice, pid, log_path, ram_init = 0):
             try: 
                 with jtop() as jetson:
                     xavier_nx = jetson.stats
-                    gpu_usage = xavier_nx['GPU1']
+                    gpu_usage = xavier_nx['GPU']
                     #print("TOTAL RAM USED: ",xavier_nx['RAM']/1024)
             except JtopException as e:
                 print(e)
