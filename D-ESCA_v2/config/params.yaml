@@ -13,18 +13,20 @@ TRANSFER_LEARNING:
   EPOCH : 81
   TFRECORDS : ['/home/thanhho/SPARC/ESCA/Code/training_on_pc/Data/tfrecord/target/Target3']
   BASED_WEIGHTS: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/tl-training/Target2/saved_model/vq_vae'
-  SAVE_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/tl-training/Target3'
+  SAVE_PATH: './Results/tl-training_results/Target3'
 REALTIME: 
-  DEVICE_INDEX_INPUT: 7
-  LOG_PATH: '/home/thanhho/SPARC/ESCA/Github/IoT-AnomallySoundDetection/D-ESCA_v2/Results/rt_test_results'
-  TRANSFER_LEARNING: False
-  MANUAL_THRESHOLD: 0.0
+  DEVICE_INDEX_INPUT: 14
+  LOG_PATH: './Results/rt_test_results'
+  TRANSFER_LEARNING: True
+  IMPORT_FILE : True
+  # MANUAL_THRESHOLD: 0.0
 
 RECORD: 
-  DEVICE_INDEX_INPUT: 18
+  DEVICE_INDEX_INPUT: 14
   ABNOMALY: True
-  SECOND: 2
-  DATASET_PATH: './dataset'
+  SECOND: 5
+  DATASET_PATH: './dataset_mic_usb_16k'
+  SAMPLING_RATE: 16000
 
 DEVICE:
   JETSON: False
