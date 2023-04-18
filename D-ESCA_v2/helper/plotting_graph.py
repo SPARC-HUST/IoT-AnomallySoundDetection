@@ -40,9 +40,9 @@ if __name__=='__main__':
 
     globals()['threshold'] = float(args.threshold)
     globals()['csv_file'] = args.csvFile
-
+    print('----------------- Inferencing Graph -----------------------')
     fig, ax = plt.subplots(figsize=(8,4))
     globals()['ax'] = ax
-
-    anim = FuncAnimation(fig, graph_output, interval=1000)
+    anim = FuncAnimation(fig, graph_output, interval=100)
     plt.show()
+

@@ -76,11 +76,9 @@ def testing(cfg = None, eval=None):
 
     # run another subprocess to read from the csv file and draw graph dynamically
     plotting_graph = join(root, '../helper', 'plotting_graph.py')
-    command = ['python3',plotting_graph, '-th', str(threshold), '-csv', csv_file]
+    command = ['gnome-terminal', '--disable-factory','--','python3',plotting_graph, '-th', str(threshold), '-csv', csv_file]
     graph = subprocess.Popen(command, preexec_fn=setpgrp)
 
-
-    # print('------------------1-----------------------')
 
     try:
         while(True):
@@ -121,7 +119,7 @@ def testing(cfg = None, eval=None):
                 if type == 1:
                     print(f'Detect abnormal at {end - start}s from starting time.')
                 else:
-                    print('Normal at {end - start}s from starting time..')
+                    print(f'Normal {end - start}s from starting time..')
                 
             except:
                 pass

@@ -15,10 +15,10 @@ TRANSFER_LEARNING:
   BASED_WEIGHTS: './Results/tl-training_results/Target2/saved_model/vq_vae'
   SAVE_PATH: './Results/tl-training_results/Target3'
 REALTIME: 
-  DEVICE_INDEX_INPUT: 14
+  DEVICE_INDEX_INPUT: 18
   LOG_PATH: './Results/rt_test_results'
   TRANSFER_LEARNING: True
-  IMPORT_FILE : True
+  #IMPORT_FILE : True
   # MANUAL_THRESHOLD: 0.0
 
 RECORD: 
@@ -29,4 +29,4 @@ RECORD:
   SAMPLING_RATE: 16000
 
 DEVICE:
-  JETSON: False
+  JETSON: True

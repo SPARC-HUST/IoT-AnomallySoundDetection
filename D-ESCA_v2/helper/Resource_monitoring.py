@@ -50,7 +50,8 @@ def monitoring(isRunInJetsonDevice, pid, log_path, ram_init = 0):
             try: 
                 with jtop() as jetson:
                     xavier_nx = jetson.stats
-                    gpu_usage = xavier_nx['GPU1']
+                    gpu_usage = xavier_nx['GPU']
+                    print(xavier_nx)
                     #print("TOTAL RAM USED: ",xavier_nx['RAM']/1024)
             except JtopException as e:
                 print(e)
@@ -110,7 +111,7 @@ def monitoring(isRunInJetsonDevice, pid, log_path, ram_init = 0):
         plt.xlabel("Time(s)", fontsize=12)
         #plt.ylabel("Percent(%)")
         plt.pause(0.05)
-        plt.savefig(figure_save, dpi=200)
+        plt.savefig(figure_save, dpi=100)
 
         # print("psutil.cpu_percent(interval=2) = %s" % (p.cpu_percent(interval=2),))
 
