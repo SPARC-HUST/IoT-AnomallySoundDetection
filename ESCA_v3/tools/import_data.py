@@ -43,7 +43,7 @@ def split_data(src, dst, length=10):
     for file in tqdm(file_list, desc="Importing",bar_format='{desc:<15}{percentage:3.0f}%|{bar:50}{r_bar}'):
         audio = AudioSegment.from_file(file, "wav")
         chunks = make_chunks(audio, timePerFile)
-        fileName = file.split('\\')[-1]
+        fileName = os.path.basename(file)
 
         # write chunks to dst
         for index, item in enumerate(chunks):

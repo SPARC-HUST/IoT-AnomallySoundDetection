@@ -44,25 +44,25 @@ class Feature_extractor():
         # a dict of implemented function
         self.feat_extr_func = {
             'gamma': self._get_gamma_feature,
-            'mel': self._get_mel_feature,
+            # 'mel': self._get_mel_feature,
         }
 
-    def extract_feature(self, type='gamma'):
-        self._check_directories()
-        self._check_type(type)
-        self._extract_feature_from_file()
+    # def extract_feature(self, type='gamma'):
+    #     self._check_directories()
+    #     # self._check_type(type)
+    #     self._extract_feature_from_file()
 
-    def extract_feature_rt(self, audio, type='gamma'):
-        self._check_type(type)
-        self._extract_feature_from_stream(audio)
+    # def extract_feature_rt(self, audio, type='gamma'):
+    #     self._check_type(type)
+    #     self._extract_feature_from_stream(audio)
 
-    def _check_type(self, type):
-        if not type in ['gamma', 'mel']:
-            raise ValueError(f'{type} is not one of the implemented methods. Please choose between (gamma) and (mel)')
-        else:
-            if self.type:
-                print(f'type parameter is now overwritten with {type}')
-            self.type = type
+    # def _check_type(self, type):
+    #     if not type in ['gamma', 'mel']:
+    #         raise ValueError(f'{type} is not one of the implemented methods. Please choose between (gamma) and (mel)')
+    #     else:
+    #         if self.type:
+    #             print(f'type parameter is now overwritten with {type}')
+    #         self.type = type
 
     def _check_directories(self):
         if not self.src:
@@ -74,47 +74,47 @@ class Feature_extractor():
         # making sure the self.dst is existed
         makedirs(self.dst, exist_ok=True)
 
-    def _extract_feature_from_file(self):
-        time_per_sample = self.segment_len*1000  # time is processed in millisecond
+    # def _extract_feature_from_file(self):
+    #     time_per_sample = self.segment_len*1000  # time is processed in millisecond
 
-        # read all files in the directory
-        file_list = read_file_name(self.src)
-        if len(file_list) == 0:
-            return None
+    #     # read all files in the directory
+    #     file_list = read_file_name(self.src)
+    #     if len(file_list) == 0:
+    #         return None
 
-        rate = self.audio_len//self.segment_len
-        file_nums = len(file_list)
-        num = (file_nums*rate)//self.sample_per_file
-        remainder = (file_nums*rate) % self.sample_per_file
-        i = 0
-        j = 0
-        idx = []
-        feature_list = []
+    #     rate = self.audio_len//self.segment_len
+    #     file_nums = len(file_list)
+    #     num = (file_nums*rate)//self.sample_per_file
+    #     remainder = (file_nums*rate) % self.sample_per_file
+    #     i = 0
+    #     j = 0
+    #     idx = []
+    #     feature_list = []
 
-        for file in tqdm(file_list, desc=f'Extracting {type} features from {self.src}'):
-            audio = AudioSegment.from_file(file, "wav")
-            # print('audiosegment')
-            chunks = make_chunks(audio, time_per_sample)
-            for index, item in enumerate(chunks):
-                feature = self.impl_func[self.type](item)
-                feature_list.append(feature)
-                name = file.split('/')[-1]
-                idx.append(name[:-4]+'_'+str(index))
-                j += 1
-                # saving back features to .npz file format
-                if (j % self.sample_per_file == 0) or (i == num and j == remainder) or (num == 0 and j == remainder):    # noqa: E501
-                    np.savez_compressed(join(self.dst, str(i)), np.array(feature_list))
-                    i += 1
-                    j = 0
-                    feature_list = []
+    #     for file in tqdm(file_list, desc=f'Extracting {type} features from {self.src}'):
+    #         audio = AudioSegment.from_file(file, "wav")
+    #         # print('audiosegment')
+    #         chunks = make_chunks(audio, time_per_sample)
+    #         for index, item in enumerate(chunks):
+    #             feature = self.impl_func[self.type](item)
+    #             feature_list.append(feature)
+    #             name = file.split('/')[-1]
+    #             idx.append(name[:-4]+'_'+str(index))
+    #             j += 1
+    #             # saving back features to .npz file format
+    #             if (j % self.sample_per_file == 0) or (i == num and j == remainder) or (num == 0 and j == remainder):    # noqa: E501
+    #                 np.savez_compressed(join(self.dst, str(i)), np.array(feature_list))
+    #                 i += 1
+    #                 j = 0
+    #                 feature_list = []
 
-        name_list = self.dst.split('/')
-        category = name_list[-2]+'_'+name_list[-1]
-        print(f'Saving {category}')
-        self.data[category] = idx
+    #     name_list = self.dst.split('/')
+    #     category = name_list[-2]+'_'+name_list[-1]
+    #     print(f'Saving {category}')
+    #     self.data[category] = idx
 
-    def _extract_feature_from_stream(self, audio):
-        return self.impl_func[self.type](audio)
+    # def _extract_feature_from_stream(self, audio):
+    #     return self.impl_func[self.type](audio)
 
     def _get_gamma_feature(self, input):
         # .reshape((-1, item.channels)) if needed
@@ -124,11 +124,11 @@ class Feature_extractor():
             self.hop_time, self.channels, self.f_min)
         return np.flipud(20 * np.log10(gtg))
 
-    def _get_mel_feature(self, input):
-        # .reshape((-1, item.channels)) if needed
-        chunk = np.array(input.get_array_of_samples(), dtype=np.float32)/(2*(8*input.sample_width-1)+1)
-        # print(chunk.shape)
-        return extract_mbe(chunk, self.sr, self.nfft, self.n_mel_band)
+    # def _get_mel_feature(self, input):
+    #     # .reshape((-1, item.channels)) if needed
+    #     chunk = np.array(input.get_array_of_samples(), dtype=np.float32)/(2*(8*input.sample_width-1)+1)
+    #     # print(chunk.shape)
+    #     return extract_mbe(chunk, self.sr, self.nfft, self.n_mel_band)
 
     # use this method to save back id dictionary only after finishing extract features for all part of the dataset
     def save_id(self):

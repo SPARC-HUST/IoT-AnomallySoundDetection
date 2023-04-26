@@ -17,7 +17,7 @@ cfg = update_config(cfg, './config/params.yaml')
 #################################################################
 def get_name(path):
     path = os.path.normpath(path)
-    name = path.split('\\')[-1]
+    name = os.path.basename(path)
     return name
 
 def create_folder(path, folderName):
