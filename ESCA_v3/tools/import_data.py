@@ -5,10 +5,22 @@ from pydub.utils import make_chunks
 from tqdm import tqdm
 import os, sys
 sys.path.append(os.getcwd())
-
+from multiprocessing import Pool
 from config import autocfg
 from config.autocfg import create_folder, get_name
+import glob
 
+def check_filesize(filePath, size=176444):
+    if os.path.getsize(filePath) != size:
+        return False
+    else: return True
+def remove_file(filePath):
+    os.remove(filePath)
+
+def remove_illegal_file(filePath):
+    if check_filesize(filePath):
+        pass
+    else: remove_file(filePath)
 def get_list_dir(path):
     '''
     a function goes through directoty and gives back list of files
@@ -59,5 +71,17 @@ if __name__ == '__main__':
     folderList = get_list_dir(sourcePath)
     for folder in folderList:
         storageSubolder = normpath(autocfg.BASE_DATA_PATH)
-        split_data(folder, join(autocfg.DATA_PATH['raw'], get_name(folder)), 2)
+        destinationPath = join(autocfg.DATA_PATH['raw'], get_name(folder))
+        split_data(folder, destinationPath, 2)
     print('Data is imported complete!')
+
+
+    filePathList = [f for f in glob.glob(autocfg.DATA_PATH['raw'] + '/**/*.wav')]
+    pool = Pool(processes=2)
+    with tqdm(desc="Illigal Checking :", total=len(filePathList),\
+            bar_format ='{desc:<15}{percentage:3.0f}%|{bar:50}{r_bar}') as pbar:
+        for _ in pool.map(remove_illegal_file, filePathList):      # process imagePathList iterable with pool
+            pbar.update()
+
+    illigalFileList = [f for f in glob.glob(autocfg.DATA_PATH['raw'] + '/**/*.wav')]
+    print(len(illigalFileList) - len(filePathList))

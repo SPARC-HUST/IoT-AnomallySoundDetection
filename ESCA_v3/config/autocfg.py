@@ -20,6 +20,23 @@ def get_name(path):
     name = os.path.basename(path)
     return name
 
+def get_folder_path(path, depth):
+    folderPath = path
+    for _ in range(depth):
+        folderPath = os.path.split(os.path.abspath(folderPath))[0]
+    return folderPath
+
+def get_folder_name(path):
+    '''Get folder name from path
+    ----------
+    '''
+    path = os.path.normpath(path)
+    folderPath = os.path.split(path)[0]
+    name = os.path.basename(folderPath)
+
+    return name
+
+
 def create_folder(path, folderName):
     path = os.path.normpath(path)
     folderPath = os.path.join(path, folderName)
