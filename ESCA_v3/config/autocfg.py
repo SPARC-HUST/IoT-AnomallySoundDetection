@@ -20,7 +20,7 @@ def get_name(path):
     name = os.path.basename(path)
     return name
 
-def get_folder_path(path, depth):
+def get_folder_path(path, depth=1):
     folderPath = path
     for _ in range(depth):
         folderPath = os.path.split(os.path.abspath(folderPath))[0]
@@ -37,7 +37,7 @@ def get_folder_name(path):
     return name
 
 
-def create_folder(path, folderName):
+def create_folder(path, folderName= ''):
     path = os.path.normpath(path)
     folderPath = os.path.join(path, folderName)
     if os.path.exists(folderPath):
@@ -46,26 +46,7 @@ def create_folder(path, folderName):
         os.makedirs(folderPath)
     return 0
 
-def init_data_path(BASE_DATA_PATH):
-    ## tree: data---input --[train, val, test]
-    #             |--tfrecord-- [train, val, test]
-    SUBFOLDERS = ['raw', 'tfrecord_temp']
-    FOLDERS = ['train', 'test']
-    for subfolder in SUBFOLDERS:
-        create_folder(BASE_DATA_PATH, subfolder)
-    for folder in FOLDERS:
-        create_folder(os.path.join(BASE_DATA_PATH, subfolder), folder)
 
-    return 0        
-        
-def switch_path(condition):
-    # rawTrain = DATA_PATH['raw_train']
-    # rawVal = DATA_PATH['raw_val']
-    # rawTest = DATA_PATH['raw_test']
-    # train = DATA_PATH['train']
-    # val = DATA_PATH['val']
-    # test = DATA_PATH['test']
-    pass
 
 def switch_result_path(impMethod):
     if impMethod == 'base':
@@ -87,14 +68,13 @@ def switch_result_path(impMethod):
 BASE_DATA_PATH = cfg.DATA.PATH.BASEPATH
 DATA_SOURCE = cfg.DATA.SOURCE
 DATASET_NAME = get_name(DATA_SOURCE)
-init_data_path(BASE_DATA_PATH)
+# init_data_path(BASE_DATA_PATH)
 
 DATA_PATH = {
     "raw": os.path.join(BASE_DATA_PATH, 'raw', DATASET_NAME),
     "normal": os.path.join(BASE_DATA_PATH, 'raw', DATASET_NAME, 'normal'),
     "abnormal": os.path.join(BASE_DATA_PATH, 'raw', DATASET_NAME,'abnormal'),
-    "train": os.path.join(BASE_DATA_PATH, 'tfrecord_temp', DATASET_NAME,'train'),
-    "test": os.path.join(BASE_DATA_PATH, 'tfrecord_temp', DATASET_NAME,'test')
+    "tfrec": os.path.join(BASE_DATA_PATH, 'tfrecord', DATASET_NAME)
 }
 
 TRAIN_CFG = {
@@ -103,8 +83,8 @@ TRAIN_CFG = {
     "num_worker": None,
     "batchsize": None
 }
-
-
+window_time, hop_time, channels, f_min = 0.06*2, 0.06, 32, 100
+GAMMATONE_SETTING = (window_time, hop_time, channels, f_min)
 
     
 
