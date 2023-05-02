@@ -3,7 +3,7 @@ import numpy as np
 from gammatone_filter import gtgram
 import os, sys
 sys.path.append(os.getcwd())
-from core.Preprocessing import TF_WRITER
+from Preprocessor import TF_WRITER
 import json
 
 import tensorflow as tf
