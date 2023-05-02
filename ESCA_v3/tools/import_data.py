@@ -6,7 +6,7 @@ from tqdm import tqdm
 import os, sys
 sys.path.append(os.getcwd())
 from multiprocessing import Pool
-from config import autocfg
+from config import autocfg as cfg
 from config.autocfg import create_folder, get_name
 import glob
 
@@ -21,18 +21,6 @@ def remove_illegal_file(filePath):
     if check_filesize(filePath):
         pass
     else: remove_file(filePath)
-def get_list_dir(path):
-    '''
-    a function goes through directoty and gives back list of files
-    '''
-    file_list = []
-    if isdir(path):
-        file_list = os.listdir(path)
-        file_list = [join(path, file) for file in file_list]
-    else:
-        return 0
-
-    return file_list
 
 def split_data(src, dst, length=10):
     '''
@@ -48,7 +36,7 @@ def split_data(src, dst, length=10):
 
     if not isdir(src):
         return 1
-    file_list = get_list_dir(src)
+    file_list = cfg.get_list_dir(src)
     if not isdir(dst):
         os.makedirs(dst)
 
@@ -67,21 +55,21 @@ if __name__ == '__main__':
     # sources and destinations are folders that contain audio files
     # please specify the path to these folder in absolute path
 
-    sourcePath = autocfg.DATA_SOURCE
-    folderList = get_list_dir(sourcePath)
+    sourcePath = cfg.DATA_SOURCE
+    folderList = cfg.get_list_dir(sourcePath)
     for folder in folderList:
-        storageSubolder = normpath(autocfg.BASE_DATA_PATH)
-        destinationPath = join(autocfg.DATA_PATH['raw'], get_name(folder))
+        storageSubolder = normpath(cfg.BASE_DATA_PATH)
+        destinationPath = join(cfg.DATA_PATH['raw'], get_name(folder))
         split_data(folder, destinationPath, 2)
     print('Data is imported complete!')
 
 
-    filePathList = [f for f in glob.glob(autocfg.DATA_PATH['raw'] + '/**/*.wav')]
+    filePathList = [f for f in glob.glob(cfg.DATA_PATH['raw'] + '/**/*.wav')]
     pool = Pool(processes=2)
     with tqdm(desc="Illigal Checking :", total=len(filePathList),\
             bar_format ='{desc:<15}{percentage:3.0f}%|{bar:50}{r_bar}') as pbar:
         for _ in pool.map(remove_illegal_file, filePathList):      # process imagePathList iterable with pool
             pbar.update()
 
-    illigalFileList = [f for f in glob.glob(autocfg.DATA_PATH['raw'] + '/**/*.wav')]
+    illigalFileList = [f for f in glob.glob(cfg.DATA_PATH['raw'] + '/**/*.wav')]
     print(len(illigalFileList) - len(filePathList))

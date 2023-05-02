@@ -53,6 +53,7 @@ def gtgram(
     wave,
     fs,
     setting):
+    
     window_time, hop_time, channels, f_min = setting
     """
     Calculate a spectrogram-like time frequency magnitude array based on

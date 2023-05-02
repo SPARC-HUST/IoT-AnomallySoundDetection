@@ -199,9 +199,9 @@ class ModelTrainer():
         '''
         # a dict storing the number of data for each set of data
         data_num_dict = {
-            'train': self._get_number_of_samples(data_dict['train']),
-            'test': self._get_number_of_samples(data_dict['test']),
-            'val': self._get_number_of_samples(data_dict['val']),
+            'train' : self._get_number_of_samples(data_dict['train']),
+            'test'  : self._get_number_of_samples(data_dict['test']),
+            'val'   : self._get_number_of_samples(data_dict['val']),
             # 'normal_tl': self._get_number_of_samples(data_dict['normal_tl']),
             # 'anomaly_tl': self._get_number_of_samples(data_dict['anomaly_tl']),
 

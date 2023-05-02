@@ -7,6 +7,7 @@ None
 """
 
 import os, sys
+from os.path import isdir, join
 sys.path.append(os.getcwd())
 
 from config import update_config, get_cfg_defaults
@@ -47,7 +48,6 @@ def create_folder(path, folderName= ''):
     return 0
 
 
-
 def switch_result_path(impMethod):
     if impMethod == 'base':
         RESULTS = os.path.join(cfg.RESULTS, 'base_training')
@@ -63,6 +63,18 @@ def switch_result_path(impMethod):
         return
     return RESULTS
 
+def get_list_dir(path):
+    '''
+    a function goes through directoty and gives back list of files
+    '''
+    file_list = []
+    if isdir(path):
+        file_list = os.listdir(path)
+        file_list = [join(path, file) for file in file_list]
+    else:
+        return 0
+
+    return file_list
 
 #################################################################
 BASE_DATA_PATH = cfg.DATA.PATH.BASEPATH
@@ -83,8 +95,11 @@ TRAIN_CFG = {
     "num_worker": None,
     "batchsize": None
 }
+
+
 window_time, hop_time, channels, f_min = 0.06*2, 0.06, 32, 100
 GAMMATONE_SETTING = (window_time, hop_time, channels, f_min)
+
 
     
 

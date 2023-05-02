@@ -7,7 +7,7 @@ import sklearn
 sys.path.append(os.getcwd())
 import tensorflow as tf
 import numpy as np
-from core.DataLoader import Dataloader
+from DataLoader import Dataloader
 from core.Trainer import ModelTrainer
 from helper.parser import arg_parser 
 from config import update_config, get_cfg_defaults
