@@ -7,7 +7,7 @@ from config import autocfg as cfg
 import librosa
 from Preprocessor import TF_WRITER
 from multiprocessing import Pool
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 
 
 class SpectrogramExtractor(TF_WRITER):

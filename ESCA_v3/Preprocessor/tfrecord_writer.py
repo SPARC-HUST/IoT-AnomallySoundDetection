@@ -23,7 +23,7 @@ class TF_WRITER():
 
     def _bytes_feature(self, value):
         """Returns a bytes_list from a string / byte."""    
-        value= tf.io.serialize_tensor(value)
+        # value= tf.io.serialize_tensor(value)
         if isinstance(value, type(tf.constant(0))):
             value = value.numpy() 
         return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
@@ -45,12 +45,12 @@ class TF_WRITER():
         Creates a tf.train.Example message ready to be written to a file.
         """
 
-        # feature = np.reshape(feature, [32*32,])
+        feature = np.reshape(feature, [32*32,])
         featurePackage = {
             # 'feature'   : self._float_feature(feature),
-            'feature'   : self._bytes_feature(feature.astype(np.float32)),
-            'label'     : self._bytes_feature(label),
-            'idx'       : self._bytes_feature(id)
+            'feature'   : self._float_feature(feature.astype(np.float32)),
+            'label'     : self._int64_feature(label),
+            'idx'       : self._bytes_feature(id.encode('utf-8'))
         }
         # Create a Features message using tf.train.Example.
         temp_proto = tf.train.Example(features=tf.train.Features(feature=featurePackage))
