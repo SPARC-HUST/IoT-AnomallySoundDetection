@@ -72,4 +72,4 @@ if __name__ == '__main__':
             pbar.update()
 
     illigalFileList = [f for f in glob.glob(cfg.DATA_PATH['raw'] + '/**/*.wav')]
-    print(len(illigalFileList) - len(filePathList))
+    print('Number of inllgal files: ', len(filePathList)-len(illigalFileList))

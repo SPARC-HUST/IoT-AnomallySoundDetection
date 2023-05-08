@@ -1,47 +1,63 @@
 
 import numpy as np
-from gammatone_filter import gtgram
 import os, sys
 sys.path.append(os.getcwd())
+from gammatone_filter import gtgram
+from config import autocfg as cfg
+import librosa
 from Preprocessor import TF_WRITER
-import json
+from multiprocessing import Pool
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-import tensorflow as tf
 
-class Feature_extractor(TF_WRITER):
-    def __init__(self, input=None, dst=None, mode='from_wav', filterType=None, filterCfg=None, samplePerTFfile = 200):
-        super(Feature_extractor, self).__init__(mode, samplePerTFfile)
-        # audio directory and output directory
-        self.input = input
-        self.dst = dst
-        
-        # usage of feature extractor: to prepare data from audio files (from_file) or from streaming data (real_time)
-        self.mode = mode
-        self.type = type
+class SpectrogramExtractor(TF_WRITER):
+    """SpectrogramExtractor extracts log spectrograms (in dB) from a
+    time-series signal.
+    ------------------------
+    :params: filter_cfg: list augument for filter
 
-        # length of each audio file
-        self.samplePerTFfile = samplePerTFfile 
+    Examples: GAMMATONE_CFG = (window_time, hop_time, channels, f_min)
+              LOG_CFG = (frame_rate, hop_time)
+    """
 
-        # parameters for gamma features/mel features
-        self.filterCfg = filterCfg
-        
-        # if filterType == 'gammatone':
-        #     self.filterCfg = filterCfg
-        # elif filterType == 'mel_band':
-        #     self.filterCfg = filterCfg
+    def __init__(self, mode = "from_wav", filter_type='gammatone', filter_cfg=None, samplePerTfrecord=200):
+        super(SpectrogramExtractor, self).__init__(mode, samplePerTfrecord)
 
-        # parameters for mel features
+        self.filter_type = filter_type
+        self.filter_cfg  = filter_cfg
 
-        
-        # a dictionary to save back all ids
-        self.data = {}
+    def extract(self, signal):
+        # Switching filter
+        if self.filter_type == 'gammatone':
+            spectogram = self._get_gamma_feature(signal)
+        elif self.filter_type == 'mel':
+            spectogram = self._get_mel_feature(signal)
+        elif self.filter_type == None:
+            spectogram = self._get_log_feature(signal)
+        return spectogram
     
-    def _get_gamma_feature(self, input):
-
-        chunk = np.array(input.get_array_of_samples(), dtype=np.float32)/(2*(8*input.sample_width-1)+1)
-        gtg = gtgram.gtgram(chunk, input.frame_rate, self.filterCfg)
+    def _get_gamma_feature(self, signal):
+        chunk = np.array(signal.get_array_of_samples(), dtype=np.float32)/(2*(8*signal.sample_width-1)+1)
+        gtg = gtgram.gtgram(chunk, signal.frame_rate, self.filter_cfg)
         return np.flipud(20 * np.log10(gtg))
     
-    def _get_mel_feature(self, input):
+    def _get_mel_feature(self, signal):
+        """Not used yet
+        ---Incomplete
+        """
         pass
+
+    def _get_log_feature(self, signal):
+        frame_rate, hop_length = self.filter_cfg
+        stft = librosa.stft(signal,
+                            n_fft=frame_rate,
+                            hop_length=hop_length)[:-1]
+        spectrogram = np.abs(stft)
+        log_spectrogram = librosa.amplitude_to_db(spectrogram)
+        return log_spectrogram
+      
+
+# if __name__ == '__main__':
+#     featureExtractor = SpectrogramExtractor(filter_cfg=cfg.GAMMATONE_SETTING)
+#     featureExtractor.export_tfrecord()
 

@@ -100,6 +100,7 @@ class Dataloader(Feature_extractor):
         }['npz' if self._check_npz() else 'wav']
         self._check_directories()
         self.impl_func()
+        self.type = type
 
     def _bytes_feature(self, value):
         """Returns a bytes_list from a string / byte."""

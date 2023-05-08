@@ -19,32 +19,29 @@ ESCA has represented the real-time abnormal environment sound detection.
 ## Features
 
 ### Main Functionality
-* **Create Dataset:** Create audio dataset 
+<!-- * **Create Dataset:** Create audio dataset 
 * **Base Training:** Training model with labelled environment audio dataset
 * **Transfer Learning:** Use pre-trained model for update model with new audio dataset. The new model contains the features of both the old and the new dataset
-* **Real-time Dectection:** Model implementation to detect anomalies in audio tracks
+* **Real-time Dectection:** Model implementation to detect anomalies in audio tracks -->
 
 **Input:** Audio recording files as format.wav
 
 **Output:** Loss value, Normal/Abnormal classificaion of files splitted from the original audio file.
 
-## Create dataset
+## Preparing data
 * Change specific parameter in [config_file](./config/params.yaml)
 
 ```bash
-RECORD: 
-  DEVICE_INDEX_INPUT: '''# Index number of recording device #'''
-  ABNOMALY: '''# [Default = False] = True if create anomaly dataset #'''
-  SECOND: '''# Length of a recording file #'''
-  DATASET_PATH: '''# Dataset save path #'''
+DATA:
+  SOURCE: 'your/dataset/path' - example: 'home/target3'
   ...
 ```
-*To run create dataset:
+*To run prepare_date:
 ```bash
-    python ./tool/create_dataset.py -cfg ./config/params.yaml
+    bash preparedate.sh
 ```
 
-## Prepare data and Training
+<!-- ## Prepare data and Training
 
 ### Prepare
 * Change specific PATH in [config_file](./config/params.yaml)
@@ -104,6 +101,6 @@ REALTIME:
    python ./tools/rt_test.py -cfg ./config/params.yaml  
 ```
 ## Results
-## Documentation
+## Documentation -->
 
 [Documentation](./Docs/)

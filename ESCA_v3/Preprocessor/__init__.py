@@ -1,3 +1,3 @@
+from .normalizer import MinMaxNormaliser
 from .tfrecord_writer import TF_WRITER
-from .feature_extractor import Feature_extractor
-from .preprocess import Preprocessor
+from .feature_extractor import SpectrogramExtractor
